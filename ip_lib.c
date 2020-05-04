@@ -6,6 +6,62 @@
 #include "ip_lib.h"
 #include "bmp.h"
 
+/*--------------------------------------------------*/
+
+/* Inizializza una ip_mat con dimensioni h w e k. Ogni elemento è inizializzato a v.
+ * Inoltre crea un vettore di stats per contenere le statische sui singoli canali.
+ * */
+ip_mat * ip_mat_create(unsigned int h, unsigned int w,unsigned  int k, float v){
+    int i,j,q;
+    ip_mat *pointer;
+    
+    pointer=(ip_mat*)malloc(sizeof(ip_mat));
+    pointer->data=(float ***)malloc(h*sizeof(float **));/*Alloco il vettore delle righe*/
+    
+
+    for(i=0;i<h;i++){
+        pointer->data[i]=(float **)malloc(w*sizeof(float *));/*Alloco il vettore delle colonne*/
+        
+        for(j=0;j<w;j++){
+            pointer->data[i][j]=(float *)malloc(k*sizeof(float));/*Alloco il vettore dei canali*/
+            
+            for(q=0;q<k;q++){
+                pointer->data[i][j][q]=v;/*Assegno v ad ogni elemento*/
+            }
+        }   
+    }
+
+
+    pointer->stat=(stats*)malloc(sizeof(stats));/*Alloco il vettore per le stats*/
+    
+    pointer->h=h;
+    pointer->w=w;
+    pointer->k=k;
+    
+    return pointer;
+
+}
+
+/* Libera la memoria (data, stat e la struttura) */
+void ip_mat_free(ip_mat *a){
+    int i,j;
+
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            free(a->data[i][j]);        
+        }
+        free(a->data[i]);  
+    }
+    
+    free(a->data);  
+    free(a->stat); 
+    free(a);
+    a=NULL;
+}
+
+/*--------------------------------------------------*/
+
+
 void ip_mat_show(ip_mat * t){
     unsigned int i,l,j;
     printf("Matrix of size %d x %d x %d (hxwxk)\n",t->h,t->w,t->k);
@@ -24,7 +80,7 @@ void ip_mat_show(ip_mat * t){
 void ip_mat_show_stats(ip_mat * t){
     unsigned int k;
 
-    compute_stats(t);
+    /*compute_stats(t);*/
 
     for(k=0;k<t->k;k++){
         printf("Channel %d:\n", k);
