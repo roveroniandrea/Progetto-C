@@ -12,3 +12,5 @@ bmp.o: bmp.c bmp.h
 	
 clean:
 	rm *.o testbmp
+	
+
