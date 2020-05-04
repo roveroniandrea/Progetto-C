@@ -47,6 +47,7 @@ void set_val(ip_mat * a, unsigned int i,unsigned int j,unsigned int k, float v);
 /* Calcola il valore minimo, il massimo e la media per ogni canale
  * e li salva dentro la struttura ip_mat stats
  * */
+/*TODO*/
 void compute_stats(ip_mat * t);
 
 /* Inizializza una ip_mat con dimensioni w h e k.
@@ -61,6 +62,7 @@ ip_mat * ip_mat_copy(ip_mat * in);
  * La terza dimensione la riportiamo per intero, stiamo in sostanza prendendo un sottoinsieme
  * delle righe e delle colonne.
  * */
+/*TODO*/
 ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end);
 
 /* Concatena due ip_mat su una certa dimensione.
@@ -83,26 +85,32 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
  *      out.w = a.w = b.w
  *      out.k = a.k + b.k
  * */
+/*TODO*/
 ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione);
 
 /**** PARTE 1: OPERAZIONI MATEMATICHE FRA IP_MAT ****/
 /* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output. */
+/*TODO*/
 ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b);
 
 /* Esegue la sottrazione di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output.
  * */
+/*TODO*/
 ip_mat * ip_mat_sub(ip_mat * a, ip_mat * b);
 
 /* Moltiplica un ip_mat per uno scalare c. Si moltiplica c per tutti gli elementi di "a"
  * e si salva il risultato in un nuovo tensore in output. */
+/*TODO*/
 ip_mat * ip_mat_mul_scalar(ip_mat *a, float c);
 
 /* Aggiunge ad un ip_mat uno scalare c e lo restituisce in un nuovo tensore in output. */
+/*TODO*/
 ip_mat *  ip_mat_add_scalar(ip_mat *a, float c);
 
 /* Calcola la media di due ip_mat a e b e la restituisce in output.*/
+/*TODO*/
 ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b);
 
 /**** PARTE 2: SEMPLICI OPERAZIONI SU IMMAGINI ****/
@@ -111,13 +119,16 @@ ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b);
  * e creando una nuova immagine avente per valore di un pixel su ogni canale la media appena calcolata.
  * Avremo quindi che tutti i canali saranno uguali.
  * */
+/*TODO*/
 ip_mat * ip_mat_to_gray_scale(ip_mat * in);
 
 /* Effettua la fusione (combinazione convessa) di due immagini */
+/*TODO*/
 ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha);
 
 /* Operazione di brightening: aumenta la luminosità dell'immagine
  * aggiunge ad ogni pixel un certo valore*/
+/*TODO*/
 ip_mat * ip_mat_brighten(ip_mat * a, float bright);
 
 /* Operazione di corruzione con rumore gaussiano:
@@ -125,6 +136,7 @@ ip_mat * ip_mat_brighten(ip_mat * a, float bright);
  * per mezzo della variabile amount.
  * out = a + gauss_noise*amount
  * */
+/*TODO*/
 ip_mat * ip_mat_corrupt(ip_mat * a, float amount);
 
 /**** PARTE 3: CONVOLUZIONE E FILTRI *****/
@@ -132,6 +144,7 @@ ip_mat * ip_mat_corrupt(ip_mat * a, float amount);
 /* Effettua la convoluzione di un ip_mat "a" con un ip_mat "f".
  * La funzione restituisce un ip_mat delle stesse dimensioni di "a".
  * */
+/*TODO*/
 ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f);
 
 /* Aggiunge un padding all'immagine. Il padding verticale è pad_h mentre quello
@@ -143,21 +156,27 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f);
  * con valori nulli sui bordi corrispondenti al padding e l'immagine "a" riportata
  * nel centro
  * */
+/*TODO*/
 ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w);
 
 /* Crea un filtro di sharpening */
+/*TODO*/
 ip_mat * create_sharpen_filter();
 
 /* Crea un filtro per rilevare i bordi */
+/*TODO*/
 ip_mat * create_edge_filter();
 
 /* Crea un filtro per aggiungere profondità */
+/*TODO*/
 ip_mat * create_emboss_filter();
 
 /* Crea un filtro medio per la rimozione del rumore */
+/*TODO*/
 ip_mat * create_average_filter(int w, int h, int k);
 
 /* Crea un filtro gaussiano per la rimozione del rumore */
+/*TODO*/
 ip_mat * create_gaussian_filter(int w, int h, int k, float sigma);
 
 /* Effettua una riscalatura dei dati tale che i valori siano in [0,new_max].
@@ -170,9 +189,11 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma);
  * Successivamente moltiplichiamo per new_max gli elementi della matrice in modo da ottenere un range
  * di valori in [0,new_max].
  * */
+/*TODO*/
 void rescale(ip_mat * t, float new_max);
 
 /* Nell'operazione di clamping i valori <low si convertono in low e i valori >high in high.*/
+/*TODO*/
 void clamp(ip_mat * t, float low, float high);
 
 /**** METODI GIA' IMPLEMENTATI ****/

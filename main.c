@@ -10,7 +10,6 @@ int main () {
     
     p=ip_mat_create(3,3,3,1.);
     
-    ip_mat_show(p);
     ip_mat_free(p);
     return 0;
 }
