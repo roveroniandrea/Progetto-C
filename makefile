@@ -11,4 +11,4 @@ bmp.o: bmp.c bmp.h
 	gcc bmp.c -obmp.o -Wall -c
 	
 clean:
-	rm *.o testbmp
+	rm *.o testbmp mandelbrot.bmp
