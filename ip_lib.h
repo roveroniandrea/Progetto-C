@@ -90,26 +90,21 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione);
 /**** PARTE 1: OPERAZIONI MATEMATICHE FRA IP_MAT ****/
 /* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output. */
-/*TODO*/
 ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b);
 
 /* Esegue la sottrazione di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output.
  * */
-/*TODO*/
 ip_mat * ip_mat_sub(ip_mat * a, ip_mat * b);
 
 /* Moltiplica un ip_mat per uno scalare c. Si moltiplica c per tutti gli elementi di "a"
  * e si salva il risultato in un nuovo tensore in output. */
-/*TODO*/
 ip_mat * ip_mat_mul_scalar(ip_mat *a, float c);
 
 /* Aggiunge ad un ip_mat uno scalare c e lo restituisce in un nuovo tensore in output. */
-/*TODO*/
 ip_mat *  ip_mat_add_scalar(ip_mat *a, float c);
 
 /* Calcola la media di due ip_mat a e b e la restituisce in output.*/
-/*TODO*/
 ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b);
 
 /**** PARTE 2: SEMPLICI OPERAZIONI SU IMMAGINI ****/
