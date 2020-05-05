@@ -83,7 +83,7 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
  *      out.w = a.w = b.w
  *      out.k = a.k + b.k
  * */
-/*TODO*/
+
 ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione);
 
 /**** PARTE 1: OPERAZIONI MATEMATICHE FRA IP_MAT ****/
@@ -112,11 +112,10 @@ ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b);
  * e creando una nuova immagine avente per valore di un pixel su ogni canale la media appena calcolata.
  * Avremo quindi che tutti i canali saranno uguali.
  * */
-/*TODO*/
+
 ip_mat * ip_mat_to_gray_scale(ip_mat * in);
 
 /* Effettua la fusione (combinazione convessa) di due immagini */
-/*TODO*/
 ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha);
 
 /* Operazione di brightening: aumenta la luminosità dell'immagine
@@ -147,7 +146,6 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f);
  * con valori nulli sui bordi corrispondenti al padding e l'immagine "a" riportata
  * nel centro
  * */
-/*TODO*/
 ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w);
 
 /* Crea un filtro di sharpening */
