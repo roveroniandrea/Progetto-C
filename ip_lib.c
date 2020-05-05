@@ -273,7 +273,27 @@ void compute_stats(ip_mat * t){
 ip_mat * ip_mat_brighten(ip_mat * a, float bright){
     ip_mat *nuova;
     nuova = ip_mat_add_scalar(a, bright);
-    compute_stats(nuova);
+    return nuova;
+}
+
+/* Operazione di corruzione con rumore gaussiano:
+ * Aggiunge del rumore gaussiano all'immagine, il rumore viene enfatizzato
+ * per mezzo della variabile amount.
+ * out = a + gauss_noise*amount
+ * */
+ip_mat * ip_mat_corrupt(ip_mat * a, float amount){
+    int i, j, k;
+    ip_mat *nuova;
+    nuova = ip_mat_copy(a);
+    for(i = 0; i < a->h; i++){
+        for(j = 0; j < a->w; j++){
+            for(k = 0; k < a->k; k++){
+                float val = get_val(nuova, i, j, k);
+                val += get_normal_random() * amount;
+                set_val(nuova, i, j, k, val);
+            }
+        }
+    }
     return nuova;
 }
 

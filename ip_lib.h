@@ -128,7 +128,6 @@ ip_mat * ip_mat_brighten(ip_mat * a, float bright);
  * per mezzo della variabile amount.
  * out = a + gauss_noise*amount
  * */
-/*TODO*/
 ip_mat * ip_mat_corrupt(ip_mat * a, float amount);
 
 /**** PARTE 3: CONVOLUZIONE E FILTRI *****/
