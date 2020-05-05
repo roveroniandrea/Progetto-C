@@ -62,7 +62,6 @@ ip_mat * ip_mat_copy(ip_mat * in);
  * La terza dimensione la riportiamo per intero, stiamo in sostanza prendendo un sottoinsieme
  * delle righe e delle colonne.
  * */
-/*TODO*/
 ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end);
 
 /* Concatena due ip_mat su una certa dimensione.

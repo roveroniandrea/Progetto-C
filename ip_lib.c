@@ -11,34 +11,40 @@
 /* Inizializza una ip_mat con dimensioni h w e k. Ogni elemento è inizializzato a v.
  * Inoltre crea un vettore di stats per contenere le statische sui singoli canali.
  * */
-ip_mat * ip_mat_create(unsigned int h, unsigned int w,unsigned  int k, float v){
+ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     int i,j,q;
-    ip_mat *pointer;
-    
-    pointer=(ip_mat*)malloc(sizeof(ip_mat));
-    pointer->data=(float ***)malloc(h*sizeof(float **));/*Alloco il vettore delle righe*/
-    
-
-    for(i=0;i<h;i++){
-        pointer->data[i]=(float **)malloc(w*sizeof(float *));/*Alloco il vettore delle colonne*/
+    if(h > 0 && w > 0 && k > 0){
+        ip_mat *pointer;
         
-        for(j=0;j<w;j++){
-            pointer->data[i][j]=(float *)malloc(k*sizeof(float));/*Alloco il vettore dei canali*/
+        pointer=(ip_mat*)malloc(sizeof(ip_mat));
+        pointer->data=(float ***)malloc(h*sizeof(float **));/*Alloco il vettore delle righe*/
+        
+
+        for(i=0;i<h;i++){
+            pointer->data[i]=(float **)malloc(w*sizeof(float *));/*Alloco il vettore delle colonne*/
             
-            for(q=0;q<k;q++){
-                pointer->data[i][j][q]=v;/*Assegno v ad ogni elemento*/
-            }
-        }   
+            for(j=0;j<w;j++){
+                pointer->data[i][j]=(float *)malloc(k*sizeof(float));/*Alloco il vettore dei canali*/
+                
+                for(q=0;q<k;q++){
+                    pointer->data[i][j][q]=v;/*Assegno v ad ogni elemento*/
+                }
+            }   
+        }
+
+
+        pointer->stat=(stats*)malloc(sizeof(stats));/*Alloco il vettore per le stats*/
+        
+        pointer->h=h;
+        pointer->w=w;
+        pointer->k=k;
+        
+        return pointer;
     }
-
-
-    pointer->stat=(stats*)malloc(sizeof(stats));/*Alloco il vettore per le stats*/
-    
-    pointer->h=h;
-    pointer->w=w;
-    pointer->k=k;
-    
-    return pointer;
+    else{
+        printf("H, W e K must be > 0\n");
+        exit(1);
+    }
 
 }
 
@@ -90,6 +96,39 @@ void ip_mat_init_random(ip_mat * t, float mean, float var){
                 set_val(t, i, j, k, val);
             }
         }
+    }
+}
+
+/* Restituisce una sotto-matrice, ovvero la porzione individuata da:
+ * t->data[row_start...row_end][col_start...col_end][0...k]
+ * La terza dimensione la riportiamo per intero, stiamo in sostanza prendendo un sottoinsieme
+ * delle righe e delle colonne.
+ * */
+ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end){
+    int numr, numc, i, j, k;
+    
+    /*Controllo che la sottomatrice abbia range accettabili*/
+    if(row_start >= 0 && row_start <= t->h && row_start < row_end && col_start >= 0 && col_start <= t->w && col_start < col_end){
+        ip_mat *submat;
+        numr = row_end - row_start;
+        numc = col_end - col_start;
+        
+        submat = ip_mat_create(numr, numc, t->k, 0.);
+        
+        for(i = row_start; i < row_end;i++){
+            for(j = col_start; j < col_end; j++){
+                for(k = 0; k < t->k; k++){
+                    float val = get_val(t, i, j, k);
+                    set_val(submat, i - row_start, j - col_start, k, val);
+                }
+            }
+        }
+        
+        return submat;
+    }
+    else{
+        printf("ip_mat_subset range non accettabili\n");
+        exit(1);
     }
 }
 
