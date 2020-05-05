@@ -121,7 +121,6 @@ ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha);
 
 /* Operazione di brightening: aumenta la luminosità dell'immagine
  * aggiunge ad ogni pixel un certo valore*/
-/*TODO*/
 ip_mat * ip_mat_brighten(ip_mat * a, float bright);
 
 /* Operazione di corruzione con rumore gaussiano:
@@ -129,7 +128,6 @@ ip_mat * ip_mat_brighten(ip_mat * a, float bright);
  * per mezzo della variabile amount.
  * out = a + gauss_noise*amount
  * */
-/*TODO*/
 ip_mat * ip_mat_corrupt(ip_mat * a, float amount);
 
 /**** PARTE 3: CONVOLUZIONE E FILTRI *****/

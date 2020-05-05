@@ -267,6 +267,36 @@ void compute_stats(ip_mat * t){
     }
 }
 
+/**** PARTE 2: SEMPLICI OPERAZIONI SU IMMAGINI ****/
+/* Operazione di brightening: aumenta la luminosità dell'immagine
+ * aggiunge ad ogni pixel un certo valore*/
+ip_mat * ip_mat_brighten(ip_mat * a, float bright){
+    ip_mat *nuova;
+    nuova = ip_mat_add_scalar(a, bright);
+    return nuova;
+}
+
+/* Operazione di corruzione con rumore gaussiano:
+ * Aggiunge del rumore gaussiano all'immagine, il rumore viene enfatizzato
+ * per mezzo della variabile amount.
+ * out = a + gauss_noise*amount
+ * */
+ip_mat * ip_mat_corrupt(ip_mat * a, float amount){
+    int i, j, k;
+    ip_mat *nuova;
+    nuova = ip_mat_copy(a);
+    for(i = 0; i < a->h; i++){
+        for(j = 0; j < a->w; j++){
+            for(k = 0; k < a->k; k++){
+                float val = get_val(nuova, i, j, k);
+                val += get_normal_random() * amount;
+                set_val(nuova, i, j, k, val);
+            }
+        }
+    }
+    return nuova;
+}
+
 
 /* Converte un'immagine RGB ad una immagine a scala di grigio.
  * Quest'operazione viene fatta calcolando la media per ogni pixel sui 3 canali
