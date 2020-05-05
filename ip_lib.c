@@ -268,6 +268,87 @@ void compute_stats(ip_mat * t){
 }
 
 
+/* Converte un'immagine RGB ad una immagine a scala di grigio.
+ * Quest'operazione viene fatta calcolando la media per ogni pixel sui 3 canali
+ * e creando una nuova immagine avente per valore di un pixel su ogni canale la media appena calcolata.
+ * Avremo quindi che tutti i canali saranno uguali.
+ * */
+ip_mat * ip_mat_to_gray_scale(ip_mat * in){
+    int i, j, k;
+    float media=0.0;
+    ip_mat *matr;
+    matr = ip_mat_create(in->h, in->w, in->k, 0.);
+    
+    
+    for(i=0; i < in->h;i++){
+        for(j = 0; j < in->w; j++){
+            media=0.0;
+            for(k = 0; k < in->k; k++){
+                media+=get_val(in, i, j, k);
+            }
+            
+            for(k = 0; k < in->k; k++){
+                set_val(matr, i, j, k,media);
+            }
+            
+        }
+    }
+    
+    
+    return matr;
+    
+}
+
+
+/* Effettua la fusione (combinazione convessa) di due immagini */
+ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
+    int i,j,q;
+    float blended;
+    ip_mat *c;
+    c = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                if(get_val(a,i,j,q) && get_val(b,i,j,q)){
+                    blended = alpha*get_val(a,i,j,q)+(1-alpha)*get_val(b,i,j,q);
+                    set_val(c,i,j,q,blended);
+                }
+            }
+        }   
+    }
+    
+    return c;
+}
+
+
+/* Aggiunge un padding all'immagine. Il padding verticale è pad_h mentre quello
+ * orizzontale è pad_w.
+ * L'output sarà un'immagine di dimensioni:
+ *      out.h = a.h + 2*pad_h;
+ *      out.w = a.w + 2*pad_w;
+ *      out.k = a.k
+ * con valori nulli sui bordi corrispondenti al padding e l'immagine "a" riportata
+ * nel centro
+ * */
+ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w){
+    int i, j, k;
+    ip_mat *matr;
+    matr = ip_mat_create((a->h)+2*pad_h, (a->w)+2*pad_w, a->k, 0.);
+    
+    for(i=pad_h; i < (matr->h)-pad_h;i++){
+        for(j = pad_w; j < (matr->w)-pad_w; j++){
+            for(k = 0; k < matr->k; k++){
+                set_val(matr, i, j, k,get_val(a,i-pad_h,j-pad_w,k));
+            }
+        }
+    }
+    
+    return matr;
+}
+
+
+
 /*--------------------------------------------------*/
 
 
