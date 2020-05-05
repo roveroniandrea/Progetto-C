@@ -60,8 +60,6 @@ void ip_mat_free(ip_mat *a){
 }
 
 
-
-
 /* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output. */
 ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b){
@@ -169,6 +167,40 @@ ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b){
     }
     
     return pointer;
+}
+
+/* Crea una copia di una ip_mat e lo restituisce in output */
+ip_mat * ip_mat_copy(ip_mat * in){
+    int i, j, k;
+    ip_mat *matr;
+    matr = ip_mat_create(in->h, in->w, in->k, 0.);
+    
+    for(i=0; i < in->h;i++){
+        for(j = 0; j < in->w; j++){
+            for(k = 0; k < in->k; k++){
+                float val = get_val(in, i, j, k);
+                set_val(matr, i, j, k, val);
+            }
+        }
+    }
+    
+    return matr;
+}
+
+/* Inizializza una ip_mat con dimensioni w h e k.
+ * Ogni elemento è generato da una gaussiana con media mean e varianza var */
+void ip_mat_init_random(ip_mat * t, float mean, float var){
+    int i, j, k;
+    
+    for(i=0; i < t->h;i++){
+        for(j = 0; j < t->w; j++){
+            for(k = 0; k < t->k; k++){
+                /*Distribuzione normale moltiplicata per la varianza e sommata alla media*/
+                float val = get_normal_random() * var + mean;
+                set_val(t, i, j, k, val);
+            }
+        }
+    }
 }
 
 
