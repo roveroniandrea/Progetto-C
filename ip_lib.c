@@ -351,6 +351,7 @@ ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
     return c;
 }
 
+/**** PARTE 3: CONVOLUZIONE E FILTRI *****/
 
 /* Aggiunge un padding all'immagine. Il padding verticale è pad_h mentre quello
  * orizzontale è pad_w.
@@ -377,7 +378,50 @@ ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w){
     return matr;
 }
 
+/* Effettua una riscalatura dei dati tale che i valori siano in [0,new_max].
+ * Utilizzate il metodo compute_stat per ricavarvi il min, max per ogni canale.
+ *
+ * I valori sono scalati tramite la formula valore-min/(max - min)
+ *
+ * Si considera ogni indice della terza dimensione indipendente, quindi l'operazione
+ * di scalatura va ripetuta per ogni "fetta" della matrice 3D.
+ * Successivamente moltiplichiamo per new_max gli elementi della matrice in modo da ottenere un range
+ * di valori in [0,new_max].
+ * */
+void rescale(ip_mat * t, float new_max){
+    int i, j, k;
+    
+    compute_stats(t);
+    
+    for(i = 0; i < t->h; i++){
+        for(j = 0; j < t->w; j++){
+            for(k = 0; k < t->k; k++){
+                float val = get_val(t, i, j, k);
+                val = (val - (t->stat)[k].min) / ((t->stat)[k].max - (t->stat)[k].min);
+                val *= new_max;
+                set_val(t, i, j, k, val);
+            }
+        }
+    }
+}
 
+/* Nell'operazione di clamping i valori <low si convertono in low e i valori >high in high.*/
+void clamp(ip_mat * t, float low, float high){
+    int i, j, k;
+    
+    for(i = 0; i < t->h; i++){
+        for(j = 0; j < t->w; j++){
+            for(k = 0; k < t->k; k++){
+                float val = get_val(t, i, j, k);
+                if(val < low)
+                    val = low;
+                if(val > high)
+                    val = high;
+                set_val(t, i, j, k, val);
+            }
+        }
+    }
+}
 
 /*--------------------------------------------------*/
 
