@@ -59,6 +59,119 @@ void ip_mat_free(ip_mat *a){
     a=NULL;
 }
 
+
+
+
+/* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
+ * e la restituisce in output. */
+ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b){
+    
+    int i,j,q;
+    ip_mat *pointer;
+    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                
+                if(get_val(a,i,j,q) && get_val(b,i,j,q))
+                    set_val(pointer,i,j,q,get_val(a,i,j,q) + get_val(b,i,j,q)); 
+
+            }
+        }   
+    }
+    
+    return pointer;
+}
+
+
+/* Esegue la sottrazione di due ip_mat (tutte le dimensioni devono essere identiche)
+ * e la restituisce in output.
+ * */
+ip_mat * ip_mat_sub(ip_mat * a, ip_mat * b){
+    int i,j,q;
+    ip_mat *pointer;
+    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                
+                if(get_val(a,i,j,q) && get_val(b,i,j,q))
+                    set_val(pointer,i,j,q,get_val(a,i,j,q) - get_val(b,i,j,q)); 
+                
+            }
+        }   
+    }
+    
+    return pointer;
+}
+
+
+/* Moltiplica un ip_mat per uno scalare c. Si moltiplica c per tutti gli elementi di "a"
+ * e si salva il risultato in un nuovo tensore in output. */
+ip_mat * ip_mat_mul_scalar(ip_mat *a, float c){
+    int i,j,q;
+    ip_mat *pointer;
+    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                
+                if(get_val(a,i,j,q))
+                    set_val(pointer,i,j,q,(get_val(a,i,j,q) * c));
+            
+            }
+        }   
+    }
+    
+    return pointer;
+}
+
+
+/* Aggiunge ad un ip_mat uno scalare c e lo restituisce in un nuovo tensore in output. */
+ip_mat *  ip_mat_add_scalar(ip_mat *a, float c){
+    int i,j,q;
+    ip_mat *pointer;
+    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                
+                if(get_val(a,i,j,q))
+                    set_val(pointer,i,j,q,get_val(a,i,j,q) + c);
+            }
+        }   
+    }
+    
+    return pointer;
+}
+
+/* Calcola la media di due ip_mat a e b e la restituisce in output.*/
+ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b){
+    int i,j,q;
+    float medium_value;
+    ip_mat *pointer;
+    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                
+                if(get_val(a,i,j,q) && get_val(b,i,j,q)){
+                    medium_value = get_val(a,i,j,q) + get_val(b,i,j,q) / 2.0;
+                    set_val(pointer,i,j,q,medium_value);
+                }
+            }
+        }   
+    }
+    
+    return pointer;
+}
+
+
 /*--------------------------------------------------*/
 
 
