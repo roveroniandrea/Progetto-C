@@ -267,6 +267,16 @@ void compute_stats(ip_mat * t){
     }
 }
 
+/**** PARTE 2: SEMPLICI OPERAZIONI SU IMMAGINI ****/
+/* Operazione di brightening: aumenta la luminosità dell'immagine
+ * aggiunge ad ogni pixel un certo valore*/
+ip_mat * ip_mat_brighten(ip_mat * a, float bright){
+    ip_mat *nuova;
+    nuova = ip_mat_add_scalar(a, bright);
+    compute_stats(nuova);
+    return nuova;
+}
+
 
 /*--------------------------------------------------*/
 
