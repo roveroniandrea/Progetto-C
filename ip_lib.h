@@ -180,11 +180,9 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma);
  * Successivamente moltiplichiamo per new_max gli elementi della matrice in modo da ottenere un range
  * di valori in [0,new_max].
  * */
-/*TODO*/
 void rescale(ip_mat * t, float new_max);
 
 /* Nell'operazione di clamping i valori <low si convertono in low e i valori >high in high.*/
-/*TODO*/
 void clamp(ip_mat * t, float low, float high);
 
 /**** METODI GIA' IMPLEMENTATI ****/
