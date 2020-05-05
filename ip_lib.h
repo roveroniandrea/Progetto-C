@@ -47,7 +47,6 @@ void set_val(ip_mat * a, unsigned int i,unsigned int j,unsigned int k, float v);
 /* Calcola il valore minimo, il massimo e la media per ogni canale
  * e li salva dentro la struttura ip_mat stats
  * */
-/*TODO*/
 void compute_stats(ip_mat * t);
 
 /* Inizializza una ip_mat con dimensioni w h e k.

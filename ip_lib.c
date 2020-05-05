@@ -33,7 +33,7 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         }
 
 
-        pointer->stat=(stats*)malloc(sizeof(stats));/*Alloco il vettore per le stats*/
+        pointer->stat=(stats*)malloc(sizeof(stats) * k);/*Alloco il vettore per le stats*/
         
         pointer->h=h;
         pointer->w=w;
@@ -242,6 +242,31 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
     }
 }
 
+/* Calcola il valore minimo, il massimo e la media per ogni canale
+ * e li salva dentro la struttura ip_mat stats
+ * */
+void compute_stats(ip_mat * t){
+    int k;
+    for(k = 0; k < t->k; k++){
+        int i, j;
+        float min = FLT_MAX, max = FLT_MIN, mean = 0, sum = 0;
+        for(i = 0; i < t->h; i++){
+            for(j = 0; j < t->w; j++){
+                float val = get_val(t, i, j, k);
+                sum += val;
+                if(val < min)
+                    min = val;
+                if(val > max)
+                    max = val;
+            }
+        }
+        mean = sum / (i * j);
+        (t->stat)[k].min = min;
+        (t->stat)[k].max = max;
+        (t->stat)[k].mean = mean;
+    }
+}
+
 
 /*--------------------------------------------------*/
 
@@ -264,7 +289,7 @@ void ip_mat_show(ip_mat * t){
 void ip_mat_show_stats(ip_mat * t){
     unsigned int k;
 
-    /*compute_stats(t);*/
+    compute_stats(t);
 
     for(k=0;k<t->k;k++){
         printf("Channel %d:\n", k);
