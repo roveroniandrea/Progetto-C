@@ -331,10 +331,10 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
                 dim=(a->w)+(b->w);
                 result=ip_mat_create(a->h,dim,a->k,0.);
                 
-                
-                for(i=0;i<a->h;i++){
-                    for(j=0;j<dim;j++){
-                        for(q=0;q<a->k;q++){
+                for(q=0;q<a->k;q++){
+                    for(i=0;i<a->h;i++){
+                        count=0;
+                        for(j=0;j<dim;j++){
                             if(j==a->w){
                                 count=0;
                             }
@@ -343,9 +343,9 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
                             }else{
                                 set_val(result,i,j,q,get_val(b,i,count,q));
                             }
+                            count++;
                         }
                     }
-                    count++;
                 }
             }else{
                 printf("Sizes of matrix must be the same\n");
@@ -360,7 +360,9 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
                 
                 
                 for(i=0;i<a->h;i++){
+                    count=0;
                     for(j=0;j<a->w;j++){
+                        count=0;
                         for(q=0;q<dim;q++){
                             if(q==a->k){
                                 count=0;
@@ -370,9 +372,10 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
                             }else{
                                 set_val(result,i,j,q,get_val(b,i,j,count));
                             }
+                            count++;
                         }
                     }
-                    count++;
+                    
                 }                
             }else{
                 printf("Sizes of matrix must be the same\n");
@@ -648,7 +651,7 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma){
         
     int i,j,q,cx,cy,x,y;
     
-    float gauss;
+    float gauss,sum;
     
     ip_mat *gaussian;
     gaussian = ip_mat_create(w,h,k,0.0);
@@ -657,17 +660,24 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma){
     
     printf("cx: %d - cy: %d",cx,cy);
     
-    for(i=0;i<h;i++)
-        for(j=0;j<w;j++)
-            for(q=0;q<k;q++){
+    for(q=0;q<k;q++){
+        sum=0;
+        for(i=0;i<h;i++){
+            for(j=0;j<w;j++){
                 x=i-cx;
                 y=j-cy;
-                
-                gauss=k*(1./(2.*PI*sigma*sigma))*exp((-(x*x + y*y) / (2.*sigma * sigma)));
-                
+                gauss=(1./(2.*PI*sigma*sigma))*exp((-(x*x + y*y) / (2.*sigma * sigma)));
+                sum += gauss;
                 set_val(gaussian,i,j,q, gauss);
             }
-
+        }
+        for(i=0;i<h;i++){
+            for(j=0;j<w;j++){
+                gauss=(get_val(gaussian,i,j,q))/sum;
+                set_val(gaussian,i,j,q, gauss);
+            }
+        }
+    }
     return gaussian;
 }
 
