@@ -47,7 +47,6 @@ void set_val(ip_mat * a, unsigned int i,unsigned int j,unsigned int k, float v);
 /* Calcola il valore minimo, il massimo e la media per ogni canale
  * e li salva dentro la struttura ip_mat stats
  * */
-/*TODO*/
 void compute_stats(ip_mat * t);
 
 /* Inizializza una ip_mat con dimensioni w h e k.
@@ -113,16 +112,14 @@ ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b);
  * e creando una nuova immagine avente per valore di un pixel su ogni canale la media appena calcolata.
  * Avremo quindi che tutti i canali saranno uguali.
  * */
-/*TODO*/
+
 ip_mat * ip_mat_to_gray_scale(ip_mat * in);
 
 /* Effettua la fusione (combinazione convessa) di due immagini */
-/*TODO*/
 ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha);
 
 /* Operazione di brightening: aumenta la luminosità dell'immagine
  * aggiunge ad ogni pixel un certo valore*/
-/*TODO*/
 ip_mat * ip_mat_brighten(ip_mat * a, float bright);
 
 /* Operazione di corruzione con rumore gaussiano:
@@ -130,7 +127,6 @@ ip_mat * ip_mat_brighten(ip_mat * a, float bright);
  * per mezzo della variabile amount.
  * out = a + gauss_noise*amount
  * */
-/*TODO*/
 ip_mat * ip_mat_corrupt(ip_mat * a, float amount);
 
 /**** PARTE 3: CONVOLUZIONE E FILTRI *****/
@@ -150,7 +146,6 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f);
  * con valori nulli sui bordi corrispondenti al padding e l'immagine "a" riportata
  * nel centro
  * */
-/*TODO*/
 ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w);
 
 /* Crea un filtro di sharpening */
@@ -183,11 +178,9 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma);
  * Successivamente moltiplichiamo per new_max gli elementi della matrice in modo da ottenere un range
  * di valori in [0,new_max].
  * */
-/*TODO*/
 void rescale(ip_mat * t, float new_max);
 
 /* Nell'operazione di clamping i valori <low si convertono in low e i valori >high in high.*/
-/*TODO*/
 void clamp(ip_mat * t, float low, float high);
 
 /**** METODI GIA' IMPLEMENTATI ****/

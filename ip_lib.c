@@ -39,7 +39,7 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         }
 
 
-        pointer->stat=(stats*)malloc(sizeof(stats));/*Alloco il vettore per le stats*/
+        pointer->stat=(stats*)malloc(sizeof(stats) * k);/*Alloco il vettore per le stats*/
         
        
         return pointer;
@@ -245,6 +245,186 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
     }
 }
 
+/* Calcola il valore minimo, il massimo e la media per ogni canale
+ * e li salva dentro la struttura ip_mat stats
+ * */
+void compute_stats(ip_mat * t){
+    int k;
+    for(k = 0; k < t->k; k++){
+        int i, j;
+        float min = FLT_MAX, max = FLT_MIN, mean = 0, sum = 0;
+        for(i = 0; i < t->h; i++){
+            for(j = 0; j < t->w; j++){
+                float val = get_val(t, i, j, k);
+                sum += val;
+                if(val < min)
+                    min = val;
+                if(val > max)
+                    max = val;
+            }
+        }
+        mean = sum / (i * j);
+        (t->stat)[k].min = min;
+        (t->stat)[k].max = max;
+        (t->stat)[k].mean = mean;
+    }
+}
+
+/**** PARTE 2: SEMPLICI OPERAZIONI SU IMMAGINI ****/
+/* Operazione di brightening: aumenta la luminosità dell'immagine
+ * aggiunge ad ogni pixel un certo valore*/
+ip_mat * ip_mat_brighten(ip_mat * a, float bright){
+    ip_mat *nuova;
+    nuova = ip_mat_add_scalar(a, bright);
+    return nuova;
+}
+
+/* Operazione di corruzione con rumore gaussiano:
+ * Aggiunge del rumore gaussiano all'immagine, il rumore viene enfatizzato
+ * per mezzo della variabile amount.
+ * out = a + gauss_noise*amount
+ * */
+ip_mat * ip_mat_corrupt(ip_mat * a, float amount){
+    int i, j, k;
+    ip_mat *nuova;
+    nuova = ip_mat_copy(a);
+    for(i = 0; i < a->h; i++){
+        for(j = 0; j < a->w; j++){
+            for(k = 0; k < a->k; k++){
+                float val = get_val(nuova, i, j, k);
+                val += get_normal_random() * amount;
+                set_val(nuova, i, j, k, val);
+            }
+        }
+    }
+    return nuova;
+}
+
+
+/* Converte un'immagine RGB ad una immagine a scala di grigio.
+ * Quest'operazione viene fatta calcolando la media per ogni pixel sui 3 canali
+ * e creando una nuova immagine avente per valore di un pixel su ogni canale la media appena calcolata.
+ * Avremo quindi che tutti i canali saranno uguali.
+ * */
+ip_mat * ip_mat_to_gray_scale(ip_mat * in){
+    int i, j, k;
+    float media=0.0;
+    ip_mat *matr;
+    matr = ip_mat_create(in->h, in->w, in->k, 0.);
+    
+    
+    for(i=0; i < in->h;i++){
+        for(j = 0; j < in->w; j++){
+            media=0.0;
+            for(k = 0; k < in->k; k++){
+                media+=get_val(in, i, j, k);
+            }
+            
+            for(k = 0; k < in->k; k++){
+                set_val(matr, i, j, k,media);
+            }
+            
+        }
+    }
+    
+    
+    return matr;
+    
+}
+
+
+/* Effettua la fusione (combinazione convessa) di due immagini */
+ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
+    int i,j,q;
+    float blended;
+    ip_mat *c;
+    c = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                if(get_val(a,i,j,q) && get_val(b,i,j,q)){
+                    blended = alpha*get_val(a,i,j,q)+(1-alpha)*get_val(b,i,j,q);
+                    set_val(c,i,j,q,blended);
+                }
+            }
+        }   
+    }
+    
+    return c;
+}
+
+/**** PARTE 3: CONVOLUZIONE E FILTRI *****/
+
+/* Aggiunge un padding all'immagine. Il padding verticale è pad_h mentre quello
+ * orizzontale è pad_w.
+ * L'output sarà un'immagine di dimensioni:
+ *      out.h = a.h + 2*pad_h;
+ *      out.w = a.w + 2*pad_w;
+ *      out.k = a.k
+ * con valori nulli sui bordi corrispondenti al padding e l'immagine "a" riportata
+ * nel centro
+ * */
+ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w){
+    int i, j, k;
+    ip_mat *matr;
+    matr = ip_mat_create((a->h)+2*pad_h, (a->w)+2*pad_w, a->k, 0.);
+    
+    for(i=pad_h; i < (matr->h)-pad_h;i++){
+        for(j = pad_w; j < (matr->w)-pad_w; j++){
+            for(k = 0; k < matr->k; k++){
+                set_val(matr, i, j, k,get_val(a,i-pad_h,j-pad_w,k));
+            }
+        }
+    }
+    
+    return matr;
+}
+
+/* Effettua una riscalatura dei dati tale che i valori siano in [0,new_max].
+ * Utilizzate il metodo compute_stat per ricavarvi il min, max per ogni canale.
+ *
+ * I valori sono scalati tramite la formula valore-min/(max - min)
+ *
+ * Si considera ogni indice della terza dimensione indipendente, quindi l'operazione
+ * di scalatura va ripetuta per ogni "fetta" della matrice 3D.
+ * Successivamente moltiplichiamo per new_max gli elementi della matrice in modo da ottenere un range
+ * di valori in [0,new_max].
+ * */
+void rescale(ip_mat * t, float new_max){
+    int i, j, k;
+    
+    compute_stats(t);
+    
+    for(i = 0; i < t->h; i++){
+        for(j = 0; j < t->w; j++){
+            for(k = 0; k < t->k; k++){
+                float val = get_val(t, i, j, k);
+                val = (val - (t->stat)[k].min) / ((t->stat)[k].max - (t->stat)[k].min);
+                val *= new_max;
+                set_val(t, i, j, k, val);
+            }
+        }
+    }
+}
+
+/* Nell'operazione di clamping i valori <low si convertono in low e i valori >high in high.*/
+void clamp(ip_mat * t, float low, float high){
+    int i, j, k;
+    
+    for(i = 0; i < t->h; i++){
+        for(j = 0; j < t->w; j++){
+            for(k = 0; k < t->k; k++){
+                float val = get_val(t, i, j, k);
+                if(val < low)
+                    val = low;
+                if(val > high)
+                    val = high;
+                set_val(t, i, j, k, val);
+            }
+        }
+    }
+}
 
 /* Concatena due ip_mat su una certa dimensione.
  * Ad esempio:
@@ -383,7 +563,7 @@ void ip_mat_show(ip_mat * t){
 void ip_mat_show_stats(ip_mat * t){
     unsigned int k;
 
-    /*compute_stats(t);*/
+    compute_stats(t);
 
     for(k=0;k<t->k;k++){
         printf("Channel %d:\n", k);
