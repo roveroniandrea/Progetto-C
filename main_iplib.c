@@ -140,7 +140,7 @@ int main (int argc, char * argv[]) {
     b2 = ip_mat_to_bitmap(img); /* converti l'immagine di output in una bitmap */
 
     ip_mat_free(img); /* libera la memoria da img */
-    /*ip_mat_free(filter); /* libera la memoria dal filtro */
+    ip_mat_free(filter); /* libera la memoria dal filtro */
 
     bm_save(b2, fn_out); /* salva la bitmap di output su file */
     bm_free(b2); /* libera la memoria dalla bitmap */
