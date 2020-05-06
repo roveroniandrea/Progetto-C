@@ -134,7 +134,6 @@ ip_mat * ip_mat_corrupt(ip_mat * a, float amount);
 /* Effettua la convoluzione di un ip_mat "a" con un ip_mat "f".
  * La funzione restituisce un ip_mat delle stesse dimensioni di "a".
  * */
-/*TODO*/
 ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f);
 
 /* Aggiunge un padding all'immagine. Il padding verticale è pad_h mentre quello

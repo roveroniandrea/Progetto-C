@@ -544,6 +544,42 @@ void clamp(ip_mat * t, float low, float high){
 }
 
 
+/* Effettua la convoluzione di un ip_mat "a" con un ip_mat "f".
+ * La funzione restituisce un ip_mat delle stesse dimensioni di "a".
+ * */
+ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
+    int i, j;
+    int r=0,c=0;
+    float product;
+    ip_mat *conv,*sub_mat,*extended;
+    
+    conv=ip_mat_create(a->h,a->w,a->k,0.);
+    
+    extended=ip_mat_padding(a,(f->h-1)/2,(f->w-1)/2);
+    
+    for(r=0;r< conv->h;r++){
+        for(c=0;c<conv->w;c++){
+            product=0.0;
+            sub_mat=ip_mat_subset( extended,r,(f->h)+r ,c,(f->w)+c );
+            
+            for(i = 0; i < sub_mat->h; i++){
+                for(j = 0; j < sub_mat->w; j++){
+                        product += ( get_val(sub_mat,i,j,0)*get_val(f,i,j,0) );
+                }
+            }
+            
+            set_val(conv,r,c,0,product);
+            ip_mat_free(sub_mat);
+        }
+    }
+    
+    ip_mat_free(extended);   
+    return conv;
+}
+
+
+
+
 /*--------------------------------------------------*/
 
 
