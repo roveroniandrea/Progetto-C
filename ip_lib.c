@@ -609,6 +609,7 @@ ip_mat * create_average_filter(int w, int h, int k){
     
     return average;
 }
+
 /* Crea un filtro per rilevare i bordi */
 ip_mat * create_edge_filter(){
     /*  -1  -1  -1
