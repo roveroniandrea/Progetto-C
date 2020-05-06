@@ -152,7 +152,6 @@ ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w);
 ip_mat * create_sharpen_filter();
 
 /* Crea un filtro per rilevare i bordi */
-/*TODO*/
 ip_mat * create_edge_filter();
 
 /* Crea un filtro per aggiungere profondità */

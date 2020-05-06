@@ -577,7 +577,16 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
     return conv;
 }
 
-
+/* Crea un filtro per rilevare i bordi */
+ip_mat * create_edge_filter(){
+    /*  -1  -1  -1
+        -1   8  -1
+        -1  -1  -1*/
+    ip_mat *kernel;
+    kernel = ip_mat_create(3, 3, 1, -1);
+    set_val(kernel, 1, 1, 0, 8);
+    return kernel;
+}
 
 
 /*--------------------------------------------------*/
