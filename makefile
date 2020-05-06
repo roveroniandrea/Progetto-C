@@ -2,8 +2,8 @@ run: main
 	./main
 	
 valgrind: main.o ip_lib.o bmp.o
-	gcc main.o ip_lib.o bmp.o -omain -Wall --ansi --pedantic -ggdb -lm -g -O1
-	valgrind -v --leak-check=full ./main
+	gcc main.o ip_lib.o bmp.o -omain -Wall --ansi --pedantic -ggdb -lm -g -O1 
+	valgrind -v --leak-check=full --track-origins=yes ./main
 	
 main: main.o ip_lib.o bmp.o
 	gcc main.o ip_lib.o bmp.o -omain -Wall --ansi --pedantic -lm -g3 -O3 -fsanitize=address -fsanitize=undefined -std=gnu89 -Wextra

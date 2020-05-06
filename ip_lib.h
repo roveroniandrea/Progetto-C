@@ -84,7 +84,7 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
  *      out.w = a.w = b.w
  *      out.k = a.k + b.k
  * */
-/*TODO*/
+
 ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione);
 
 /**** PARTE 1: OPERAZIONI MATEMATICHE FRA IP_MAT ****/

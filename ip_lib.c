@@ -18,6 +18,10 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         
         pointer=(ip_mat*)malloc(sizeof(ip_mat));
         pointer->data=(float ***)malloc(h*sizeof(float **));/*Alloco il vettore delle righe*/
+        pointer->h=h;
+        pointer->w=w;
+        pointer->k=k;
+        
         
 
         for(i=0;i<h;i++){
@@ -27,7 +31,9 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
                 pointer->data[i][j]=(float *)malloc(k*sizeof(float));/*Alloco il vettore dei canali*/
                 
                 for(q=0;q<k;q++){
-                    pointer->data[i][j][q]=v;/*Assegno v ad ogni elemento*/
+                    set_val(pointer,i,j,q,v);/*Assegno v ad ogni elemento*/
+                    
+                    
                 }
             }   
         }
@@ -35,10 +41,7 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
 
         pointer->stat=(stats*)malloc(sizeof(stats));/*Alloco il vettore per le stats*/
         
-        pointer->h=h;
-        pointer->w=w;
-        pointer->k=k;
-        
+       
         return pointer;
     }
     else{
@@ -243,6 +246,122 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
 }
 
 
+/* Concatena due ip_mat su una certa dimensione.
+ * Ad esempio:
+ * ip_mat_concat(ip_mat * a, ip_mat * b, 0);
+ *      produrrà un nuovo ip_mat di dimensioni:
+ *      out.h = a.h + b.h
+ *      out.w = a.w = b.w
+ *      out.k = a.k = b.k
+ *
+ * ip_mat_concat(ip_mat * a, ip_mat * b, 1);
+ *      produrrà un nuovo ip_mat di dimensioni:
+ *      out.h = a.h = b.h
+ *      out.w = a.w + b.w
+ *      out.k = a.k = b.k
+ *
+ * ip_mat_concat(ip_mat * a, ip_mat * b, 2);
+ *      produrrà un nuovo ip_mat di dimensioni:
+ *      out.h = a.h = b.h
+ *      out.w = a.w = b.w
+ *      out.k = a.k + b.k
+ * */
+
+ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
+    int i,j,q,count=0,dim=0;
+    ip_mat *result;
+    result=NULL;
+    
+    switch(dimensione){
+        case 0: /*CASE 0*/
+            if(a->w == b->w && a->k == b->k){
+                dim=(a->h)+(b->h);
+                
+                result=ip_mat_create(dim,a->w,a->k,0.);
+                
+                for(i=0;i<dim;i++){                    
+                    for(j=0;j<a->w;j++){
+                        for(q=0;q<a->k;q++){
+                            if(i==a->h){
+                                count=0;
+                            }
+                            if(i<a->h){
+                                set_val(result,i,j,q,get_val(a,count,j,q));
+                            }else{
+                                set_val(result,i,j,q,get_val(b,count,j,q));
+                            }
+                        }
+                    }
+                    count++;
+                }              
+            }else{
+                printf("Sizes of matrix must be the same\n");
+                exit(1);
+            }
+            
+            break;
+        case 1:/*CASE 1*/
+            
+            if(a->h == b->h && a->k == b->k){
+                
+                dim=(a->w)+(b->w);
+                result=ip_mat_create(a->h,dim,a->k,0.);
+                
+                
+                for(i=0;i<a->h;i++){
+                    for(j=0;j<dim;j++){
+                        for(q=0;q<a->k;q++){
+                            if(j==a->w){
+                                count=0;
+                            }
+                            if(j<a->w){
+                                set_val(result,i,j,q,get_val(a,i,count,q));
+                            }else{
+                                set_val(result,i,j,q,get_val(b,i,count,q));
+                            }
+                        }
+                    }
+                    count++;
+                }
+            }else{
+                printf("Sizes of matrix must be the same\n");
+                exit(1);
+            }
+            
+            break;
+        case 2:/*CASE 2*/
+            if(a->h == b->h && a->w == b->w){
+                dim=(a->k)+(b->k);
+                result=ip_mat_create(a->h,a->w,dim,0.);
+                
+                
+                for(i=0;i<a->h;i++){
+                    for(j=0;j<a->w;j++){
+                        for(q=0;q<dim;q++){
+                            if(q==a->k){
+                                count=0;
+                            }
+                            if(q<a->k){
+                                set_val(result,i,j,q,get_val(a,i,j,count));
+                            }else{
+                                set_val(result,i,j,q,get_val(b,i,j,count));
+                            }
+                        }
+                    }
+                    count++;
+                }                
+            }else{
+                printf("Sizes of matrix must be the same\n");
+                exit(1);
+            }
+            
+            break;
+        default:
+            printf("Dimesion must be between 0 and 2\n");
+            exit(1);
+    }
+    return result;
+}
 /*--------------------------------------------------*/
 
 
@@ -328,7 +447,7 @@ void set_val(ip_mat * a, unsigned int i,unsigned int j,unsigned int k, float v){
     if(i<a->h && j<a->w &&k<a->k){
         a->data[i][j][k]=v;
     }else{
-        printf("Errore set_val!!!");
+        printf("Errore set_val!!! %d - %d - %d",i,j,k);
         exit(1);
     }
 }
