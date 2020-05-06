@@ -548,7 +548,7 @@ void clamp(ip_mat * t, float low, float high){
  * La funzione restituisce un ip_mat delle stesse dimensioni di "a".
  * */
 ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
-    int i, j;
+    int i, j, k;
     int r=0,c=0;
     float product;
     ip_mat *conv,*sub_mat,*extended;
@@ -559,16 +559,19 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
     
     for(r=0;r< conv->h;r++){
         for(c=0;c<conv->w;c++){
-            product=0.0;
+            
             sub_mat=ip_mat_subset( extended,r,(f->h)+r ,c,(f->w)+c );
             
-            for(i = 0; i < sub_mat->h; i++){
-                for(j = 0; j < sub_mat->w; j++){
+             for(k=0;k < sub_mat->k;k++){
+                 product=0.0;
+                 for(i = 0; i < sub_mat->h; i++){
+                    for(j = 0; j < sub_mat->w; j++){
                         product += ( get_val(sub_mat,i,j,0)*get_val(f,i,j,0) );
-                }
-            }
-            
-            set_val(conv,r,c,0,product);
+                    }
+                 }
+                 set_val(conv,r,c,k,product);
+             }
+             
             ip_mat_free(sub_mat);
         }
     }
@@ -576,6 +579,7 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
     ip_mat_free(extended);   
     return conv;
 }
+
 
 
 
