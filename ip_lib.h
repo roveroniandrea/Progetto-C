@@ -148,19 +148,15 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f);
 ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w);
 
 /* Crea un filtro di sharpening */
-/*TODO*/
 ip_mat * create_sharpen_filter();
 
 /* Crea un filtro per rilevare i bordi */
-/*TODO*/
 ip_mat * create_edge_filter();
 
 /* Crea un filtro per aggiungere profondità */
-/*TODO*/
 ip_mat * create_emboss_filter();
 
 /* Crea un filtro medio per la rimozione del rumore */
-/*TODO*/
 ip_mat * create_average_filter(int w, int h, int k);
 
 /* Crea un filtro gaussiano per la rimozione del rumore */
