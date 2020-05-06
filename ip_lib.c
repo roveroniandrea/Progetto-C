@@ -580,7 +580,6 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
     return conv;
 }
 
-<<<<<<< HEAD
 /* Crea un filtro di sharpening */
 ip_mat * create_sharpen_filter(){
     
