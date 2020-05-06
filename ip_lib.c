@@ -566,7 +566,7 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
                  product=0.0;
                  for(i = 0; i < sub_mat->h; i++){
                     for(j = 0; j < sub_mat->w; j++){
-                        product += ( get_val(sub_mat,i,j,0)*get_val(f,i,j,0) );
+                        product += ( get_val(sub_mat,i,j,k)*get_val(f,i,j,0) );
                     }
                  }
                  set_val(conv,r,c,k,product);
@@ -578,6 +578,27 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
     
     ip_mat_free(extended);   
     return conv;
+}
+
+
+ip_mat * create_emboss_filter(){
+    ip_mat *filter;
+    int i,j;
+    
+    int kernel[3][3] = {
+    {-2, -1, 0},
+    {-1, 1, 1},
+    {0, 1, 2}
+    };
+    
+    filter=ip_mat_create(3,3,1,0.);
+    
+    for(i=0;i<3;i++){
+        for(j=0;j<3;j++){
+            set_val(filter,i,j,0,kernel[i][j]);
+        }
+    }
+    return filter;
 }
 
 
