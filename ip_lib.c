@@ -8,6 +8,11 @@
 
 /*--------------------------------------------------*/
 
+/*Controlla che due matrici abbiano le stesse dimensioni*/
+int check_dimensions(ip_mat *a, ip_mat *b){
+    return a->w == b->w && a->h == b->h && a->k == b->k;
+}
+
 /* Inizializza una ip_mat con dimensioni h w e k. Ogni elemento è inizializzato a v.
  * Inoltre crea un vettore di stats per contenere le statische sui singoli canali.
  * */
@@ -353,7 +358,8 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
                             }
                             if(j<a->w){
                                 set_val(result,i,j,q,get_val(a,i,count,q));
-                            }else{
+                            }
+                            else{
                                 set_val(result,i,j,q,get_val(b,i,count,q));
                             }
                             count++;
@@ -695,10 +701,6 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma){
         }
     }
     return gaussian;
-}
-
-int check_dimensions(ip_mat *a, ip_mat *b){
-    return a->w == b->w && a->h == b->h && a->k == b->k;
 }
 
 
