@@ -22,8 +22,6 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         pointer->w=w;
         pointer->k=k;
         
-        
-
         for(i=0;i<h;i++){
             pointer->data[i]=(float **)malloc(w*sizeof(float *));/*Alloco il vettore delle colonne*/
             
@@ -32,16 +30,12 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
                 
                 for(q=0;q<k;q++){
                     set_val(pointer,i,j,q,v);/*Assegno v ad ogni elemento*/
-                    
-                    
                 }
             }   
         }
-
-
+        
         pointer->stat=(stats*)malloc(sizeof(stats) * k);/*Alloco il vettore per le stats*/
         
-       
         return pointer;
     }
     else{
@@ -54,41 +48,45 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
 /* Libera la memoria (data, stat e la struttura) */
 void ip_mat_free(ip_mat *a){
     int i,j;
-
-    for(i=0;i<a->h;i++){
-        for(j=0;j<a->w;j++){
-            free(a->data[i][j]);        
+    if(a){
+        for(i=0;i<a->h;i++){
+            for(j=0;j<a->w;j++){
+                free(a->data[i][j]);        
+            }
+            free(a->data[i]);  
         }
-        free(a->data[i]);  
+        
+        free(a->data);  
+        free(a->stat); 
+        free(a);
+        a=NULL;
     }
-    
-    free(a->data);  
-    free(a->stat); 
-    free(a);
-    a=NULL;
 }
 
 
 /* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output. */
 ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b){
-    
     int i,j,q;
     ip_mat *pointer;
-    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
-    
-    for(i=0;i<a->h;i++){
-        for(j=0;j<a->w;j++){
-            for(q=0;q<a->k;q++){
-                
-                if(get_val(a,i,j,q) && get_val(b,i,j,q))
-                    set_val(pointer,i,j,q,get_val(a,i,j,q) + get_val(b,i,j,q)); 
-
-            }
-        }   
+    if(check_dimensions(a, b)){
+        pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+        
+        for(i=0;i<a->h;i++){
+            for(j=0;j<a->w;j++){
+                for(q=0;q<a->k;q++){
+                    if(get_val(a,i,j,q) && get_val(b,i,j,q))
+                        set_val(pointer,i,j,q,get_val(a,i,j,q) + get_val(b,i,j,q)); 
+                }
+            }   
+        }
+        
+        return pointer;
     }
-    
-    return pointer;
+    else{
+        printf("ip_mat must have same size!\n");
+        exit(1);
+    }
 }
 
 
@@ -98,20 +96,26 @@ ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b){
 ip_mat * ip_mat_sub(ip_mat * a, ip_mat * b){
     int i,j,q;
     ip_mat *pointer;
-    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
-    
-    for(i=0;i<a->h;i++){
-        for(j=0;j<a->w;j++){
-            for(q=0;q<a->k;q++){
-                
-                if(get_val(a,i,j,q) && get_val(b,i,j,q))
-                    set_val(pointer,i,j,q,get_val(a,i,j,q) - get_val(b,i,j,q)); 
-                
-            }
-        }   
+    if(check_dimensions(a, b)){
+        pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+        
+        for(i=0;i<a->h;i++){
+            for(j=0;j<a->w;j++){
+                for(q=0;q<a->k;q++){
+                    
+                    if(get_val(a,i,j,q) && get_val(b,i,j,q))
+                        set_val(pointer,i,j,q,get_val(a,i,j,q) - get_val(b,i,j,q)); 
+                    
+                }
+            }   
+        }
+        
+        return pointer;
     }
-    
-    return pointer;
+    else{
+        printf("ip_mat must have same size!\n");
+        exit(1);
+    }
 }
 
 
@@ -125,10 +129,8 @@ ip_mat * ip_mat_mul_scalar(ip_mat *a, float c){
     for(i=0;i<a->h;i++){
         for(j=0;j<a->w;j++){
             for(q=0;q<a->k;q++){
-                
                 if(get_val(a,i,j,q))
                     set_val(pointer,i,j,q,(get_val(a,i,j,q) * c));
-            
             }
         }   
     }
@@ -161,21 +163,27 @@ ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b){
     int i,j,q;
     float medium_value;
     ip_mat *pointer;
-    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
-    
-    for(i=0;i<a->h;i++){
-        for(j=0;j<a->w;j++){
-            for(q=0;q<a->k;q++){
-                
-                if(get_val(a,i,j,q) && get_val(b,i,j,q)){
-                    medium_value = get_val(a,i,j,q) + get_val(b,i,j,q) / 2.0;
-                    set_val(pointer,i,j,q,medium_value);
+    if(check_dimensions(a, b)){
+        pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+        
+        for(i=0;i<a->h;i++){
+            for(j=0;j<a->w;j++){
+                for(q=0;q<a->k;q++){
+                    
+                    if(get_val(a,i,j,q) && get_val(b,i,j,q)){
+                        medium_value = get_val(a,i,j,q) + get_val(b,i,j,q) / 2.0;
+                        set_val(pointer,i,j,q,medium_value);
+                    }
                 }
-            }
-        }   
+            }   
+        }
+        
+        return pointer;
     }
-    
-    return pointer;
+    else{
+        printf("ip_mat must have same size!\n");
+        exit(1);
+    }
 }
 
 /* Crea una copia di una ip_mat e lo restituisce in output */
@@ -200,15 +208,20 @@ ip_mat * ip_mat_copy(ip_mat * in){
  * Ogni elemento è generato da una gaussiana con media mean e varianza var */
 void ip_mat_init_random(ip_mat * t, float mean, float var){
     int i, j, k;
-    
-    for(i=0; i < t->h;i++){
-        for(j = 0; j < t->w; j++){
-            for(k = 0; k < t->k; k++){
-                /*Distribuzione normale moltiplicata per la varianza e sommata alla media*/
-                float val = get_normal_random() * var + mean;
-                set_val(t, i, j, k, val);
+    if(t){
+        for(i=0; i < t->h;i++){
+            for(j = 0; j < t->w; j++){
+                for(k = 0; k < t->k; k++){
+                    /*Distribuzione normale moltiplicata per la varianza e sommata alla media*/
+                    float val = get_normal_random() * var + mean;
+                    set_val(t, i, j, k, val);
+                }
             }
         }
+    }
+    else{
+        printf("ip_mat must be initialized first!\n");
+        exit(1);
     }
 }
 
@@ -240,7 +253,7 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
         return submat;
     }
     else{
-        printf("ip_mat_subset range non accettabili\n");
+        printf("ip_mat_subset range not acceptable\n");
         exit(1);
     }
 }
@@ -384,7 +397,7 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
             
             break;
         default:
-            printf("Dimesion must be between 0 and 2\n");
+            printf("Dimension must be between 0 and 2\n");
             exit(1);
     }
     return result;
@@ -446,10 +459,7 @@ ip_mat * ip_mat_to_gray_scale(ip_mat * in){
             
         }
     }
-    
-    
     return matr;
-    
 }
 
 
@@ -458,7 +468,7 @@ ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
     int i,j,q;
     float blended = 0.0;
     ip_mat *c;
-    if(a->h == b->h && a->w == b->w && a->k == b->k && alpha >= 0 && alpha <= 1){
+    if(check_dimensions(a, b) && alpha >= 0 && alpha <= 1){
         c = ip_mat_create(a->h,a->w,a->k,0.0);
         
         for(i=0;i<a->h;i++){
@@ -687,7 +697,9 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma){
     return gaussian;
 }
 
-
+int check_dimensions(ip_mat *a, ip_mat *b){
+    return a->w == b->w && a->h == b->h && a->k == b->k;
+}
 
 
 /*--------------------------------------------------*/
