@@ -566,7 +566,7 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
                  product=0.0;
                  for(i = 0; i < sub_mat->h; i++){
                     for(j = 0; j < sub_mat->w; j++){
-                        product += ( get_val(sub_mat,i,j,0)*get_val(f,i,j,0) );
+                        product += ( get_val(sub_mat,i,j,k)*get_val(f,i,j,0) );
                     }
                  }
                  set_val(conv,r,c,k,product);
