@@ -160,7 +160,6 @@ ip_mat * create_emboss_filter();
 ip_mat * create_average_filter(int w, int h, int k);
 
 /* Crea un filtro gaussiano per la rimozione del rumore */
-/*TODO*/
 ip_mat * create_gaussian_filter(int w, int h, int k, float sigma);
 
 /* Effettua una riscalatura dei dati tale che i valori siano in [0,new_max].

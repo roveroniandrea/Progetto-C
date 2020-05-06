@@ -456,22 +456,30 @@ ip_mat * ip_mat_to_gray_scale(ip_mat * in){
 /* Effettua la fusione (combinazione convessa) di due immagini */
 ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
     int i,j,q;
-    float blended;
+    float blended = 0.0;
     ip_mat *c;
-    c = ip_mat_create(a->h,a->w,a->k,0.0);
-    
-    for(i=0;i<a->h;i++){
-        for(j=0;j<a->w;j++){
-            for(q=0;q<a->k;q++){
-                if(get_val(a,i,j,q) && get_val(b,i,j,q)){
-                    blended = alpha*get_val(a,i,j,q)+(1-alpha)*get_val(b,i,j,q);
+    if(a->h == b->h && a->w == b->w && a->k == b->k && alpha >= 0 && alpha <= 1){
+        c = ip_mat_create(a->h,a->w,a->k,0.0);
+        
+        for(i=0;i<a->h;i++){
+            for(j=0;j<a->w;j++){
+                for(q=0;q<a->k;q++){
+                    blended = alpha*get_val(a,i,j,q)+((1-alpha)*get_val(b,i,j,q));
                     set_val(c,i,j,q,blended);
                 }
-            }
-        }   
+            }   
+        }
+        return c;
     }
-    
-    return c;
+    else{
+        if(alpha >= 0 && alpha <= 1){
+            printf("Images must have the same size!\n");
+        }
+        else{
+            printf("Alpha must be between 0 and 1!\n");
+        }
+        exit(1);
+    }
 }
 
 /**** PARTE 3: CONVOLUZIONE E FILTRI *****/
@@ -658,8 +666,6 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma){
     cx=(w-1)/2;
     cy=(h-1)/2;
     
-    printf("cx: %d - cy: %d",cx,cy);
-    
     for(q=0;q<k;q++){
         sum=0;
         for(i=0;i<h;i++){
@@ -769,7 +775,7 @@ void set_val(ip_mat * a, unsigned int i,unsigned int j,unsigned int k, float v){
     if(i<a->h && j<a->w &&k<a->k){
         a->data[i][j][k]=v;
     }else{
-        printf("Errore set_val!!! %d - %d - %d",i,j,k);
+        printf("Errore set_val!!!");
         exit(1);
     }
 }
