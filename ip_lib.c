@@ -596,7 +596,7 @@ ip_mat * create_sharpen_filter(){
     
 }
 
-<<<<<<< HEAD
+
 ip_mat * create_emboss_filter(){
     ip_mat *filter;
     int i,j;
@@ -618,7 +618,6 @@ ip_mat * create_emboss_filter(){
 }
 
 
-=======
 /* Crea un filtro medio per la rimozione del rumore */
 ip_mat * create_average_filter(int w, int h, int k){
     int i,j,q;
@@ -643,7 +642,7 @@ ip_mat * create_edge_filter(){
     set_val(kernel, 1, 1, 0, 8);
     return kernel;
 }
->>>>>>> 7af8a52e2e1081f0135c227aa7cae5837986a5d6
+
 
 
 
