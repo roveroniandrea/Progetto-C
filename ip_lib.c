@@ -566,7 +566,7 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
                  product=0.0;
                  for(i = 0; i < sub_mat->h; i++){
                     for(j = 0; j < sub_mat->w; j++){
-                        product += ( get_val(sub_mat,i,j,0)*get_val(f,i,j,0) );
+                        product += ( get_val(sub_mat,i,j,k)*get_val(f,i,j,0) );
                     }
                  }
                  set_val(conv,r,c,k,product);
@@ -580,7 +580,35 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
     return conv;
 }
 
+/* Crea un filtro di sharpening */
+ip_mat * create_sharpen_filter(){
+    
+    int sharp_kernel[3][3] = { {0,-1,0},{-1,5,-1},{0,-1,0} };
+    int i,j;
+    ip_mat *sharpened;
+    sharpened = ip_mat_create(3,3,1,0.0);
+    
+    for(i=0;i<3;i++)
+        for(j=0;j<3;j++)
+            set_val(sharpened,i,j,0,sharp_kernel[i][j]);
+    
+    return sharpened;
+    
+}
 
+/* Crea un filtro medio per la rimozione del rumore */
+ip_mat * create_average_filter(int w, int h, int k){
+    int i,j,q;
+    ip_mat *average;
+    average = ip_mat_create(w,h,k,0.0);
+    
+    for(i=0;i<h;i++)
+        for(j=0;j<w;j++)
+            for(q=0;q<k;q++)
+                set_val(average,i,j,q, (1./(w*h)) );
+    
+    return average;
+}
 
 
 
