@@ -460,7 +460,7 @@ ip_mat * ip_mat_to_gray_scale(ip_mat * in){
             }
             
             for(k = 0; k < in->k; k++){
-                set_val(matr, i, j, k,media);
+                set_val(matr, i, j, k,media/3.);
             }
             
         }
