@@ -11,7 +11,7 @@ int main () {
     
     
     /*Load the two bmp*/
-    loaded = bm_load("flower2.bmp"); 
+    loaded = bm_load("flower.bmp"); 
     p1 = bitmap_to_ip_mat(loaded); 
     loaded1 = bm_load("mongolfiere.bmp"); 
     p2 = bitmap_to_ip_mat(loaded1);

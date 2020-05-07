@@ -1,5 +1,5 @@
 run: main
-	./main 
+	./main.sh 
 	
 valgrind: main.o ip_lib.o bmp.o
 	gcc main.o ip_lib.o bmp.o -omain -Wall --ansi --pedantic -ggdb -lm -g -O1 
@@ -28,4 +28,5 @@ bmp.o: bmp.c bmp.h
 	
 clean:
 	rm *.o main
+	rm -R BMP
 	clear
