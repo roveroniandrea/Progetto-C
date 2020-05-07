@@ -43,7 +43,7 @@ int main () {
     
     
     /*GAUSS*/
-    filter=create_gaussian_filter(7, 7, 3, 4);
+    filter=create_gaussian_filter(7, 7, 3, 3);
     p_partial = ip_mat_convolve(p, filter); 
     clamp(p_partial,0,255);
     p_partial2=ip_mat_concat(p,p_partial,1);
@@ -51,17 +51,33 @@ int main () {
     bm_save(final_bmp, "BMP/gaussian.bmp"); 
     ip_mat_free(filter);
     ip_mat_free(p_partial2);
-    ip_mat_free(p);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
     
     
+    /*AVG/GAUSS*/
+    filter=create_average_filter(5, 5, 3);
+    p_partial = ip_mat_convolve(p, filter);
+    clamp(p_partial,0,255);
+    ip_mat_free(filter);
+    filter=create_gaussian_filter(7, 7, 3, 4);
+    p_partial2 = ip_mat_convolve(p, filter); 
+    clamp(p_partial2,0,255);
+    ip_mat_free(filter);
+    ip_mat_free(p);
+    p=ip_mat_concat(p_partial,p_partial2,1);
+    final_bmp = ip_mat_to_bitmap(p); 
+    bm_save(final_bmp, "BMP/AVG_GAUSS.bmp");
+    ip_mat_free(p_partial2);
+    ip_mat_free(p_partial);
+    bm_free(final_bmp);
+    ip_mat_free(p);
+    
+    
+    
     /*GRAY*/
     p=ip_mat_to_gray_scale(p1);
-
-    p_partial=ip_mat_concat(p1,p,1);
-    /*clamp(p_partial,0,255);*/
-    
+    p_partial=ip_mat_concat(p1,p,1);   
     final_bmp = ip_mat_to_bitmap(p_partial); 
     bm_save(final_bmp, "BMP/gray_scale.bmp"); 
     ip_mat_free(p);
@@ -85,7 +101,6 @@ int main () {
     p_partial=ip_mat_concat(p2,p,1);
     p_partial2=ip_mat_concat(p3,p,1);
     ip_mat_free(p);
-    
     p=ip_mat_concat(p_partial,p_partial2,0);
     final_bmp = ip_mat_to_bitmap(p); 
     bm_save(final_bmp, "BMP/blend.bmp"); 
@@ -136,10 +151,6 @@ int main () {
         
     
     
-    
-    
-
-     
     bm_free(loaded);
     bm_free(loaded1);
     bm_free(loaded2);
