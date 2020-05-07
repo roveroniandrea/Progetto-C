@@ -22,6 +22,7 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         ip_mat *pointer;
         
         pointer=(ip_mat*)malloc(sizeof(ip_mat));
+        
         pointer->data=(float ***)malloc(h*sizeof(float **));/*Alloco il vettore delle righe*/
         pointer->h=h;
         pointer->w=w;
@@ -45,7 +46,9 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
     }
     else{
         printf("H, W e K must be > 0\n");
+
         exit(1);
+        
     }
 
 }
