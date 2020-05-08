@@ -4,6 +4,7 @@
 #include "ip_lib.h" 
 #include "bmp.h" 
 int main () { 
+    int count=1;
     Bitmap *final_bmp,*loaded,*loaded1,*loaded2; 
     ip_mat *filter,*p,*p1,*p2,*p3,*p_partial,*p_partial2; 
     
@@ -27,6 +28,8 @@ int main () {
     bm_save(final_bmp, "BMP/corrupt.bmp"); 
     ip_mat_free(p_partial);
     bm_free(final_bmp);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     
     /*AVG*/
@@ -40,6 +43,8 @@ int main () {
     ip_mat_free(p_partial);
     ip_mat_free(p_partial2);
     bm_free(final_bmp);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     
     /*GAUSS*/
@@ -53,6 +58,8 @@ int main () {
     ip_mat_free(p_partial2);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     
     /*AVG/GAUSS*/
@@ -72,6 +79,8 @@ int main () {
     ip_mat_free(p_partial);
     bm_free(final_bmp);
     ip_mat_free(p);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     
     
@@ -83,7 +92,8 @@ int main () {
     ip_mat_free(p);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
-    
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     /*BRIGHTEN*/
     p=ip_mat_brighten(p1,50);
@@ -94,6 +104,8 @@ int main () {
     ip_mat_free(p);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     
     /*BLEND*/
@@ -108,6 +120,8 @@ int main () {
     ip_mat_free(p_partial);
     ip_mat_free(p_partial2);
     bm_free(final_bmp);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     
     /*SHARP*/
@@ -121,6 +135,8 @@ int main () {
     ip_mat_free(filter);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     
     
@@ -135,6 +151,8 @@ int main () {
     ip_mat_free(filter);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
     
     
     /*EMBOSS*/
@@ -148,6 +166,8 @@ int main () {
     ip_mat_free(filter);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
+    printf("\n\n\tFatta immagine %d\n\n",count);
+    count++;
         
     
     
