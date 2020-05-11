@@ -2,4 +2,6 @@
 *.bmp
 /testbmp
 /main
+/prof
+makefile
 main.c
