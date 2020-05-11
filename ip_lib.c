@@ -22,6 +22,7 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         ip_mat *pointer;
         
         pointer=(ip_mat*)malloc(sizeof(ip_mat));
+        
         pointer->data=(float ***)malloc(h*sizeof(float **));/*Alloco il vettore delle righe*/
         pointer->h=h;
         pointer->w=w;
@@ -41,11 +42,18 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         
         pointer->stat=(stats*)malloc(sizeof(stats) * k);/*Alloco il vettore per le stats*/
         
+        for(i=0;i<k;i++){
+            (pointer->stat)[i].min = v;
+            (pointer->stat)[i].max = v;
+            (pointer->stat)[i].mean = v;
+        }
         return pointer;
     }
     else{
         printf("H, W e K must be > 0\n");
+
         exit(1);
+        
     }
 
 }
@@ -68,6 +76,30 @@ void ip_mat_free(ip_mat *a){
     }
 }
 
+/* Calcola il valore minimo, il massimo e la media per ogni canale
+ * e li salva dentro la struttura ip_mat stats
+ * */
+void compute_stats(ip_mat * t){
+    /*int k;
+    for(k = 0; k < t->k; k++){
+        int i, j;
+        float min = FLT_MAX, max = FLT_MIN, mean = 0, sum = 0;
+        for(i = 0; i < t->h; i++){
+            for(j = 0; j < t->w; j++){
+                float val = get_val(t, i, j, k);
+                sum += val;
+                if(val < min)
+                    min = val;
+                if(val > max)
+                    max = val;
+            }
+        }
+        mean = sum / (i * j);
+        (t->stat)[k].min = min;
+        (t->stat)[k].max = max;
+        (t->stat)[k].mean = mean;
+    }*/
+}
 
 /* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output. */
@@ -85,6 +117,7 @@ ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b){
                 }
             }   
         }
+        compute_stats(pointer);
         
         return pointer;
     }
@@ -114,7 +147,7 @@ ip_mat * ip_mat_sub(ip_mat * a, ip_mat * b){
                 }
             }   
         }
-        
+        compute_stats(pointer);        
         return pointer;
     }
     else{
@@ -139,7 +172,7 @@ ip_mat * ip_mat_mul_scalar(ip_mat *a, float c){
             }
         }   
     }
-    
+    compute_stats(pointer);
     return pointer;
 }
 
@@ -159,7 +192,7 @@ ip_mat *  ip_mat_add_scalar(ip_mat *a, float c){
             }
         }   
     }
-    
+    compute_stats(pointer);
     return pointer;
 }
 
@@ -182,7 +215,7 @@ ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b){
                 }
             }   
         }
-        
+        compute_stats(pointer);
         return pointer;
     }
     else{
@@ -205,7 +238,7 @@ ip_mat * ip_mat_copy(ip_mat * in){
             }
         }
     }
-    
+    compute_stats(matr);
     return matr;
 }
 
@@ -223,6 +256,7 @@ void ip_mat_init_random(ip_mat * t, float mean, float var){
                 }
             }
         }
+        compute_stats(t);
     }
     else{
         printf("ip_mat must be initialized first!\n");
@@ -254,7 +288,7 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
                 }
             }
         }
-        
+        compute_stats(submat);        
         return submat;
     }
     else{
@@ -263,30 +297,7 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
     }
 }
 
-/* Calcola il valore minimo, il massimo e la media per ogni canale
- * e li salva dentro la struttura ip_mat stats
- * */
-void compute_stats(ip_mat * t){
-    int k;
-    for(k = 0; k < t->k; k++){
-        int i, j;
-        float min = FLT_MAX, max = FLT_MIN, mean = 0, sum = 0;
-        for(i = 0; i < t->h; i++){
-            for(j = 0; j < t->w; j++){
-                float val = get_val(t, i, j, k);
-                sum += val;
-                if(val < min)
-                    min = val;
-                if(val > max)
-                    max = val;
-            }
-        }
-        mean = sum / (i * j);
-        (t->stat)[k].min = min;
-        (t->stat)[k].max = max;
-        (t->stat)[k].mean = mean;
-    }
-}
+
 
 /* Concatena due ip_mat su una certa dimensione.
  * Ad esempio:
@@ -376,8 +387,7 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
             if(a->h == b->h && a->w == b->w){
                 dim=(a->k)+(b->k);
                 result=ip_mat_create(a->h,a->w,dim,0.);
-                
-                
+            
                 for(i=0;i<a->h;i++){
                     count=0;
                     for(j=0;j<a->w;j++){
@@ -406,6 +416,7 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
             printf("Dimension must be between 0 and 2\n");
             exit(1);
     }
+    compute_stats(result);   
     return result;
 }
 
@@ -436,6 +447,7 @@ ip_mat * ip_mat_corrupt(ip_mat * a, float amount){
             }
         }
     }
+    compute_stats(nuova);
     return nuova;
 }
 
@@ -451,7 +463,6 @@ ip_mat * ip_mat_to_gray_scale(ip_mat * in){
     ip_mat *matr;
     matr = ip_mat_create(in->h, in->w, in->k, 0.);
     
-    
     for(i=0; i < in->h;i++){
         for(j = 0; j < in->w; j++){
             media=0.0;
@@ -460,11 +471,12 @@ ip_mat * ip_mat_to_gray_scale(ip_mat * in){
             }
             
             for(k = 0; k < in->k; k++){
-                set_val(matr, i, j, k,media);
+                set_val(matr, i, j, k,media/3.);
             }
             
         }
     }
+    compute_stats(matr);
     return matr;
 }
 
@@ -485,6 +497,7 @@ ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
                 }
             }   
         }
+        compute_stats(c);
         return c;
     }
     else{
@@ -521,7 +534,7 @@ ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w){
             }
         }
     }
-    
+    compute_stats(matr);
     return matr;
 }
 
@@ -538,8 +551,6 @@ ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w){
 void rescale(ip_mat * t, float new_max){
     int i, j, k;
     
-    compute_stats(t);
-    
     for(i = 0; i < t->h; i++){
         for(j = 0; j < t->w; j++){
             for(k = 0; k < t->k; k++){
@@ -550,6 +561,7 @@ void rescale(ip_mat * t, float new_max){
             }
         }
     }
+    compute_stats(t);
 }
 
 /* Nell'operazione di clamping i valori <low si convertono in low e i valori >high in high.*/
@@ -568,6 +580,7 @@ void clamp(ip_mat * t, float low, float high){
             }
         }
     }
+    compute_stats(t);
 }
 
 
@@ -603,7 +616,9 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
         }
     }
     
-    ip_mat_free(extended);   
+    ip_mat_free(extended);
+    
+    compute_stats(conv);
     return conv;
 }
 
@@ -618,7 +633,8 @@ ip_mat * create_sharpen_filter(){
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
             set_val(sharpened,i,j,0,sharp_kernel[i][j]);
-    
+        
+    compute_stats(sharpened);
     return sharpened;
     
 }
@@ -641,6 +657,7 @@ ip_mat * create_emboss_filter(){
             set_val(filter,i,j,0,kernel[i][j]);
         }
     }
+    compute_stats(filter);
     return filter;
 }
 
@@ -655,7 +672,8 @@ ip_mat * create_average_filter(int w, int h, int k){
         for(j=0;j<w;j++)
             for(q=0;q<k;q++)
                 set_val(average,i,j,q, (1./(w*h)) );
-    
+            
+    compute_stats(average);        
     return average;
 }
 
@@ -667,6 +685,8 @@ ip_mat * create_edge_filter(){
     ip_mat *kernel;
     kernel = ip_mat_create(3, 3, 1, -1);
     set_val(kernel, 1, 1, 0, 8);
+    
+    compute_stats(kernel);
     return kernel;
 }
 
@@ -700,6 +720,7 @@ ip_mat * create_gaussian_filter(int w, int h, int k, float sigma){
             }
         }
     }
+    compute_stats(gaussian);  
     return gaussian;
 }
 
