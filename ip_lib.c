@@ -243,15 +243,15 @@ ip_mat * ip_mat_copy(ip_mat * in){
 }
 
 /* Inizializza una ip_mat con dimensioni w h e k.
- * Ogni elemento è generato da una gaussiana con media mean e varianza var */
-void ip_mat_init_random(ip_mat * t, float mean, float var){
+ * Ogni elemento è generato da una gaussiana con media mean e varianza std */
+void ip_mat_init_random(ip_mat * t, float mean, float std){
     int i, j, k;
     if(t){
         for(i=0; i < t->h;i++){
             for(j = 0; j < t->w; j++){
                 for(k = 0; k < t->k; k++){
                     /*Distribuzione normale moltiplicata per la varianza e sommata alla media*/
-                    float val = get_normal_random() * var + mean;
+                    float val = get_normal_random(mean, std);
                     set_val(t, i, j, k, val);
                 }
             }
@@ -442,7 +442,7 @@ ip_mat * ip_mat_corrupt(ip_mat * a, float amount){
         for(j = 0; j < a->w; j++){
             for(k = 0; k < a->k; k++){
                 float val = get_val(nuova, i, j, k);
-                val += get_normal_random() * amount;
+                val += get_normal_random(0, amount);
                 set_val(nuova, i, j, k, val);
             }
         }
@@ -522,7 +522,7 @@ ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
  * con valori nulli sui bordi corrispondenti al padding e l'immagine "a" riportata
  * nel centro
  * */
-ip_mat * ip_mat_padding(ip_mat * a, int pad_h, int pad_w){
+ip_mat * ip_mat_padding(ip_mat * a, unsigned int pad_h, unsigned int pad_w){
     int i, j, k;
     ip_mat *matr;
     matr = ip_mat_create((a->h)+2*pad_h, (a->w)+2*pad_w, a->k, 0.);
@@ -663,7 +663,7 @@ ip_mat * create_emboss_filter(){
 
 
 /* Crea un filtro medio per la rimozione del rumore */
-ip_mat * create_average_filter(int w, int h, int k){
+ip_mat * create_average_filter(unsigned int h, unsigned int w, unsigned int k){
     int i,j,q;
     ip_mat *average;
     average = ip_mat_create(w,h,k,0.0);
@@ -691,7 +691,7 @@ ip_mat * create_edge_filter(){
 }
 
 
-ip_mat * create_gaussian_filter(int w, int h, int k, float sigma){
+ip_mat * create_gaussian_filter(unsigned int h, unsigned int w, unsigned int k, float sigma){
         
     int i,j,q,cx,cy,x,y;
     
@@ -815,9 +815,11 @@ void set_val(ip_mat * a, unsigned int i,unsigned int j,unsigned int k, float v){
     }
 }
 
-float get_normal_random(){
+float get_normal_random(float media, float std){
+
     float y1 = ( (float)(rand()) + 1. )/( (float)(RAND_MAX) + 1. );
     float y2 = ( (float)(rand()) + 1. )/( (float)(RAND_MAX) + 1. );
-    return cos(2*PI*y2)*sqrt(-2.*log(y1));
+    float num = cos(2*PI*y2)*sqrt(-2.*log(y1));
 
+    return media + num*std;
 }
