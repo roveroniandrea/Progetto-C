@@ -593,46 +593,52 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
     float product;
     ip_mat *conv,*sub_mat,*extended;
     
-    conv=ip_mat_create(a->h,a->w,a->k,0.);
+    if(f->k == a->k){
+        conv=ip_mat_create(a->h,a->w,a->k,0.);
     
-    extended=ip_mat_padding(a,(f->h-1)/2,(f->w-1)/2);
-    
-    for(r=0;r< conv->h;r++){
-        for(c=0;c<conv->w;c++){
-            
-            sub_mat=ip_mat_subset( extended,r,(f->h)+r ,c,(f->w)+c );
-            
-             for(k=0;k < sub_mat->k;k++){
-                 product=0.0;
-                 for(i = 0; i < sub_mat->h; i++){
-                    for(j = 0; j < sub_mat->w; j++){
-                        product += ( get_val(sub_mat,i,j,k)*get_val(f,i,j,0) );
+        extended=ip_mat_padding(a,(f->h-1)/2,(f->w-1)/2);
+        
+        for(r=0;r< conv->h;r++){
+            for(c=0;c<conv->w;c++){
+                
+                sub_mat=ip_mat_subset( extended,r,(f->h)+r ,c,(f->w)+c );
+                
+                for(k=0;k < sub_mat->k;k++){
+                    product=0.0;
+                    for(i = 0; i < sub_mat->h; i++){
+                        for(j = 0; j < sub_mat->w; j++){
+                            product += ( get_val(sub_mat,i,j,k)*get_val(f,i,j,k) );
+                        }
                     }
-                 }
-                 set_val(conv,r,c,k,product);
-             }
-             
-            ip_mat_free(sub_mat);
+                    set_val(conv,r,c,k,product);
+                }
+                
+                ip_mat_free(sub_mat);
+            }
         }
+        
+        ip_mat_free(extended);
+        
+        compute_stats(conv);
+        return conv; 
+    }else{
+        printf("Sizes of matrix must be the same\n");
+        exit(1);
     }
-    
-    ip_mat_free(extended);
-    
-    compute_stats(conv);
-    return conv;
 }
 
 /* Crea un filtro di sharpening */
 ip_mat * create_sharpen_filter(){
     
     int sharp_kernel[3][3] = { {0,-1,0},{-1,5,-1},{0,-1,0} };
-    int i,j;
+    int i,j,k;
     ip_mat *sharpened;
-    sharpened = ip_mat_create(3,3,1,0.0);
+    sharpened = ip_mat_create(3,3,3,0.0);
     
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
-            set_val(sharpened,i,j,0,sharp_kernel[i][j]);
+            for(k=0;k<3;k++)
+                set_val(sharpened,i,j,k,sharp_kernel[i][j]);
         
     compute_stats(sharpened);
     return sharpened;
@@ -642,7 +648,7 @@ ip_mat * create_sharpen_filter(){
 
 ip_mat * create_emboss_filter(){
     ip_mat *filter;
-    int i,j;
+    int i,j,k;
     
     int kernel[3][3] = {
     {-2, -1, 0},
@@ -652,11 +658,11 @@ ip_mat * create_emboss_filter(){
     
     filter=ip_mat_create(3,3,1,0.);
     
-    for(i=0;i<3;i++){
-        for(j=0;j<3;j++){
-            set_val(filter,i,j,0,kernel[i][j]);
-        }
-    }
+    for(i=0;i<3;i++)
+        for(j=0;j<3;j++)
+            for(k=0;k<3;k++)
+                set_val(filter,i,j,k,kernel[i][j]);
+            
     compute_stats(filter);
     return filter;
 }
@@ -682,9 +688,12 @@ ip_mat * create_edge_filter(){
     /*  -1  -1  -1
         -1   8  -1
         -1  -1  -1*/
+    int i;
     ip_mat *kernel;
-    kernel = ip_mat_create(3, 3, 1, -1);
-    set_val(kernel, 1, 1, 0, 8);
+    kernel = ip_mat_create(3, 3, 3, -1);
+    
+    for(i=0;i<3;i++)
+        set_val(kernel, 1, 1, i, 8);
     
     compute_stats(kernel);
     return kernel;
