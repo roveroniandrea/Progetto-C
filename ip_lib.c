@@ -656,7 +656,7 @@ ip_mat * create_emboss_filter(){
     {0, 1, 2}
     };
     
-    filter=ip_mat_create(3,3,1,0.);
+    filter=ip_mat_create(3,3,3,0.);
     
     for(i=0;i<3;i++)
         for(j=0;j<3;j++)
