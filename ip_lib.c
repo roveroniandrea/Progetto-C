@@ -80,7 +80,7 @@ void ip_mat_free(ip_mat *a){
  * e li salva dentro la struttura ip_mat stats
  * */
 void compute_stats(ip_mat * t){
-    /*int k;
+    int k;
     for(k = 0; k < t->k; k++){
         int i, j;
         float min = FLT_MAX, max = FLT_MIN, mean = 0, sum = 0;
@@ -98,7 +98,7 @@ void compute_stats(ip_mat * t){
         (t->stat)[k].min = min;
         (t->stat)[k].max = max;
         (t->stat)[k].mean = mean;
-    }*/
+    }
 }
 
 /* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
@@ -243,7 +243,7 @@ ip_mat * ip_mat_copy(ip_mat * in){
 }
 
 /* Inizializza una ip_mat con dimensioni w h e k.
- * Ogni elemento è generato da una gaussiana con media mean e varianza std */
+ * Ogni elemento è generato da una gaussiana con media mean e deviazione std */
 void ip_mat_init_random(ip_mat * t, float mean, float std){
     int i, j, k;
     if(t){
@@ -442,7 +442,7 @@ ip_mat * ip_mat_corrupt(ip_mat * a, float amount){
         for(j = 0; j < a->w; j++){
             for(k = 0; k < a->k; k++){
                 float val = get_val(nuova, i, j, k);
-                val += get_normal_random(0, amount);
+                val += get_normal_random(0, amount / 2);
                 set_val(nuova, i, j, k, val);
             }
         }

@@ -22,7 +22,8 @@ int main () {
     
     
     /*CORRUPT*/
-    p=ip_mat_corrupt(p1,30);
+    p=ip_mat_corrupt(p1,50);
+    clamp(p, 0, 255);
     p_partial=ip_mat_concat(p1,p,1);
     final_bmp = ip_mat_to_bitmap(p_partial); 
     bm_save(final_bmp, "BMP/corrupt.bmp"); 
