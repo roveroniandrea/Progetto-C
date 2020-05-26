@@ -13,6 +13,13 @@ int check_dimensions(ip_mat *a, ip_mat *b){
     return a->w == b->w && a->h == b->h && a->k == b->k;
 }
 
+void check_malloc(int valid){
+    if(!valid){
+        printf("Malloc returned NULL pointer\n");
+        exit(1);
+    }
+}
+
 /* Inizializza una ip_mat con dimensioni h w e k. Ogni elemento è inizializzato a v.
  * Inoltre crea un vettore di stats per contenere le statische sui singoli canali.
  * */
@@ -22,17 +29,21 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         ip_mat *pointer;
         
         pointer=(ip_mat*)malloc(sizeof(ip_mat));
+        check_malloc(pointer != NULL);
         
         pointer->data=(float ***)malloc(h*sizeof(float **));/*Alloco il vettore delle righe*/
+        check_malloc(pointer->data != NULL);
         pointer->h=h;
         pointer->w=w;
         pointer->k=k;
         
         for(i=0;i<h;i++){
             pointer->data[i]=(float **)malloc(w*sizeof(float *));/*Alloco il vettore delle colonne*/
+            check_malloc(pointer->data[i] != NULL);
             
             for(j=0;j<w;j++){
                 pointer->data[i][j]=(float *)malloc(k*sizeof(float));/*Alloco il vettore dei canali*/
+                check_malloc(pointer->data[i][j] != NULL);
                 
                 for(q=0;q<k;q++){
                     set_val(pointer,i,j,q,v);/*Assegno v ad ogni elemento*/
@@ -41,6 +52,7 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
         }
         
         pointer->stat=(stats*)malloc(sizeof(stats) * k);/*Alloco il vettore per le stats*/
+        check_malloc(pointer->stat != NULL);
         
         for(i=0;i<k;i++){
             (pointer->stat)[i].min = v;
@@ -112,8 +124,7 @@ ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b){
         for(i=0;i<a->h;i++){
             for(j=0;j<a->w;j++){
                 for(q=0;q<a->k;q++){
-                    if(get_val(a,i,j,q) && get_val(b,i,j,q))
-                        set_val(pointer,i,j,q,get_val(a,i,j,q) + get_val(b,i,j,q)); 
+                    set_val(pointer,i,j,q,get_val(a,i,j,q) + get_val(b,i,j,q)); 
                 }
             }   
         }
@@ -140,10 +151,7 @@ ip_mat * ip_mat_sub(ip_mat * a, ip_mat * b){
         for(i=0;i<a->h;i++){
             for(j=0;j<a->w;j++){
                 for(q=0;q<a->k;q++){
-                    
-                    if(get_val(a,i,j,q) && get_val(b,i,j,q))
-                        set_val(pointer,i,j,q,get_val(a,i,j,q) - get_val(b,i,j,q)); 
-                    
+                    set_val(pointer,i,j,q,get_val(a,i,j,q) - get_val(b,i,j,q)); 
                 }
             }   
         }
@@ -167,8 +175,7 @@ ip_mat * ip_mat_mul_scalar(ip_mat *a, float c){
     for(i=0;i<a->h;i++){
         for(j=0;j<a->w;j++){
             for(q=0;q<a->k;q++){
-                if(get_val(a,i,j,q))
-                    set_val(pointer,i,j,q,(get_val(a,i,j,q) * c));
+                set_val(pointer,i,j,q,(get_val(a,i,j,q) * c));
             }
         }   
     }
@@ -186,9 +193,7 @@ ip_mat *  ip_mat_add_scalar(ip_mat *a, float c){
     for(i=0;i<a->h;i++){
         for(j=0;j<a->w;j++){
             for(q=0;q<a->k;q++){
-                
-                if(get_val(a,i,j,q))
-                    set_val(pointer,i,j,q,get_val(a,i,j,q) + c);
+                set_val(pointer,i,j,q,get_val(a,i,j,q) + c);
             }
         }   
     }
@@ -199,7 +204,6 @@ ip_mat *  ip_mat_add_scalar(ip_mat *a, float c){
 /* Calcola la media di due ip_mat a e b e la restituisce in output.*/
 ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b){
     int i,j,q;
-    float medium_value;
     ip_mat *pointer;
     if(check_dimensions(a, b)){
         pointer = ip_mat_create(a->h,a->w,a->k,0.0);
@@ -207,11 +211,9 @@ ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b){
         for(i=0;i<a->h;i++){
             for(j=0;j<a->w;j++){
                 for(q=0;q<a->k;q++){
-                    
-                    if(get_val(a,i,j,q) && get_val(b,i,j,q)){
-                        medium_value = get_val(a,i,j,q) + get_val(b,i,j,q) / 2.0;
+                        float medium_value;
+                        medium_value = (get_val(a,i,j,q) + get_val(b,i,j,q)) / 2.0;
                         set_val(pointer,i,j,q,medium_value);
-                    }
                 }
             }   
         }
