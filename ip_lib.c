@@ -9,10 +9,13 @@
 /*--------------------------------------------------*/
 
 /*Controlla che due matrici abbiano le stesse dimensioni*/
-int check_dimensions(ip_mat *a, ip_mat *b){
-    return a->w == b->w && a->h == b->h && a->k == b->k;
+void check_dimensions(ip_mat *a, ip_mat *b){
+    if(!(a->w == b->w && a->h == b->h && a->k == b->k)){
+        printf("ip_mat must have same size!\n");
+        exit(1);
+    }
 }
-
+/*Controlla che la allocazione della memoria sia andata a buon fine*/
 void check_malloc(int valid){
     if(!valid){
         printf("Malloc returned NULL pointer\n");
@@ -23,7 +26,7 @@ void check_malloc(int valid){
 /* Inizializza una ip_mat con dimensioni h w e k. Ogni elemento è inizializzato a v.
  * Inoltre crea un vettore di stats per contenere le statische sui singoli canali.
  * */
-ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
+ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){ /*checchin*/
     unsigned int i,j,q;
     if(h > 0 && w > 0 && k > 0){
         ip_mat *pointer;
@@ -71,7 +74,7 @@ ip_mat * ip_mat_create(unsigned int h, unsigned int w, unsigned int k, float v){
 }
 
 /* Libera la memoria (data, stat e la struttura) */
-void ip_mat_free(ip_mat *a){
+void ip_mat_free(ip_mat *a){ /*checchin*/
     unsigned int i,j;
     if(a){
         for(i=0;i<a->h;i++){
@@ -91,7 +94,7 @@ void ip_mat_free(ip_mat *a){
 /* Calcola il valore minimo, il massimo e la media per ogni canale
  * e li salva dentro la struttura ip_mat stats
  * */
-void compute_stats(ip_mat * t){
+void compute_stats(ip_mat * t){/*rove*/
     unsigned int k;
     for(k = 0; k < t->k; k++){
         unsigned int i, j;
@@ -115,59 +118,48 @@ void compute_stats(ip_mat * t){
 
 /* Esegue la somma di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output. */
-ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b){
+ip_mat * ip_mat_sum(ip_mat * a, ip_mat * b){/*faso*/
     unsigned int i,j,q;
     ip_mat *pointer;
-    if(check_dimensions(a, b)){
-        pointer = ip_mat_create(a->h,a->w,a->k,0.0);
-        
-        for(i=0;i<a->h;i++){
-            for(j=0;j<a->w;j++){
-                for(q=0;q<a->k;q++){
-                    set_val(pointer,i,j,q,get_val(a,i,j,q) + get_val(b,i,j,q)); 
-                }
-            }   
-        }
-        compute_stats(pointer);
-        
-        return pointer;
+    check_dimensions(a, b);
+    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                set_val(pointer,i,j,q,get_val(a,i,j,q) + get_val(b,i,j,q)); 
+            }
+        }   
     }
-    else{
-        printf("ip_mat must have same size!\n");
-        exit(1);
-    }
+    compute_stats(pointer);
+    
+    return pointer;
 }
 
 
 /* Esegue la sottrazione di due ip_mat (tutte le dimensioni devono essere identiche)
  * e la restituisce in output.
  * */
-ip_mat * ip_mat_sub(ip_mat * a, ip_mat * b){
+ip_mat * ip_mat_sub(ip_mat * a, ip_mat * b){/*faso*/
     unsigned int i,j,q;
     ip_mat *pointer;
-    if(check_dimensions(a, b)){
-        pointer = ip_mat_create(a->h,a->w,a->k,0.0);
-        
-        for(i=0;i<a->h;i++){
-            for(j=0;j<a->w;j++){
-                for(q=0;q<a->k;q++){
-                    set_val(pointer,i,j,q,get_val(a,i,j,q) - get_val(b,i,j,q)); 
-                }
-            }   
-        }
-        compute_stats(pointer);        
-        return pointer;
+    check_dimensions(a, b);
+    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                set_val(pointer,i,j,q,get_val(a,i,j,q) - get_val(b,i,j,q)); 
+            }
+        }   
     }
-    else{
-        printf("ip_mat must have same size!\n");
-        exit(1);
-    }
+    compute_stats(pointer);        
+    return pointer;
 }
 
 
 /* Moltiplica un ip_mat per uno scalare c. Si moltiplica c per tutti gli elementi di "a"
  * e si salva il risultato in un nuovo tensore in output. */
-ip_mat * ip_mat_mul_scalar(ip_mat *a, float c){
+ip_mat * ip_mat_mul_scalar(ip_mat *a, float c){/*faso*/
     unsigned int i,j,q;
     ip_mat *pointer;
     pointer = ip_mat_create(a->h,a->w,a->k,0.0);
@@ -185,7 +177,7 @@ ip_mat * ip_mat_mul_scalar(ip_mat *a, float c){
 
 
 /* Aggiunge ad un ip_mat uno scalare c e lo restituisce in un nuovo tensore in output. */
-ip_mat *  ip_mat_add_scalar(ip_mat *a, float c){
+ip_mat *  ip_mat_add_scalar(ip_mat *a, float c){/*faso*/
     unsigned int i,j,q;
     ip_mat *pointer;
     pointer = ip_mat_create(a->h,a->w,a->k,0.0);
@@ -202,32 +194,27 @@ ip_mat *  ip_mat_add_scalar(ip_mat *a, float c){
 }
 
 /* Calcola la media di due ip_mat a e b e la restituisce in output.*/
-ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b){
+ip_mat * ip_mat_mean(ip_mat * a, ip_mat * b){/*faso*/
     unsigned int i,j,q;
     ip_mat *pointer;
-    if(check_dimensions(a, b)){
-        pointer = ip_mat_create(a->h,a->w,a->k,0.0);
-        
-        for(i=0;i<a->h;i++){
-            for(j=0;j<a->w;j++){
-                for(q=0;q<a->k;q++){
-                        float medium_value;
-                        medium_value = (get_val(a,i,j,q) + get_val(b,i,j,q)) / 2.0;
-                        set_val(pointer,i,j,q,medium_value);
-                }
-            }   
-        }
-        compute_stats(pointer);
-        return pointer;
+    check_dimensions(a, b);
+    pointer = ip_mat_create(a->h,a->w,a->k,0.0);
+    
+    for(i=0;i<a->h;i++){
+        for(j=0;j<a->w;j++){
+            for(q=0;q<a->k;q++){
+                    float medium_value;
+                    medium_value = (get_val(a,i,j,q) + get_val(b,i,j,q)) / 2.0;
+                    set_val(pointer,i,j,q,medium_value);
+            }
+        }   
     }
-    else{
-        printf("ip_mat must have same size!\n");
-        exit(1);
-    }
+    compute_stats(pointer);
+    return pointer;
 }
 
 /* Crea una copia di una ip_mat e lo restituisce in output */
-ip_mat * ip_mat_copy(ip_mat * in){
+ip_mat * ip_mat_copy(ip_mat * in){/*rove*/
     unsigned int i, j, k;
     ip_mat *matr;
     matr = ip_mat_create(in->h, in->w, in->k, 0.);
@@ -246,7 +233,7 @@ ip_mat * ip_mat_copy(ip_mat * in){
 
 /* Inizializza una ip_mat con dimensioni w h e k.
  * Ogni elemento è generato da una gaussiana con media mean e deviazione std */
-void ip_mat_init_random(ip_mat * t, float mean, float std){
+void ip_mat_init_random(ip_mat * t, float mean, float std){/*rove*/
     unsigned int i, j, k;
     if(t){
         for(i=0; i < t->h;i++){
@@ -271,7 +258,7 @@ void ip_mat_init_random(ip_mat * t, float mean, float std){
  * La terza dimensione la riportiamo per intero, stiamo in sostanza prendendo un sottoinsieme
  * delle righe e delle colonne.
  * */
-ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end){
+ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end){/*rove*/
     unsigned int numr, numc, i, j, k;
     
     /*Controllo che la sottomatrice abbia range accettabili*/
@@ -322,7 +309,7 @@ ip_mat * ip_mat_subset(ip_mat * t, unsigned int row_start, unsigned int row_end,
  *      out.k = a.k + b.k
  * */
 
-ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
+ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){/*chec*/
     unsigned int i,j,q,count=0,dim=0;
     ip_mat *result;
     result=NULL;
@@ -425,7 +412,7 @@ ip_mat * ip_mat_concat(ip_mat * a, ip_mat * b, int dimensione){
 /**** PARTE 2: SEMPLICI OPERAZIONI SU IMMAGINI ****/
 /* Operazione di brightening: aumenta la luminosità dell'immagine
  * aggiunge ad ogni pixel un certo valore*/
-ip_mat * ip_mat_brighten(ip_mat * a, float bright){
+ip_mat * ip_mat_brighten(ip_mat * a, float bright){/*rove*/
     ip_mat *nuova;
     nuova = ip_mat_add_scalar(a, bright);
     return nuova;
@@ -436,7 +423,7 @@ ip_mat * ip_mat_brighten(ip_mat * a, float bright){
  * per mezzo della variabile amount.
  * out = a + gauss_noise*amount
  * */
-ip_mat * ip_mat_corrupt(ip_mat * a, float amount){
+ip_mat * ip_mat_corrupt(ip_mat * a, float amount){/*rove*/
     unsigned int i, j, k;
     ip_mat *nuova;
     nuova = ip_mat_copy(a);
@@ -459,7 +446,7 @@ ip_mat * ip_mat_corrupt(ip_mat * a, float amount){
  * e creando una nuova immagine avente per valore di un pixel su ogni canale la media appena calcolata.
  * Avremo quindi che tutti i canali saranno uguali.
  * */
-ip_mat * ip_mat_to_gray_scale(ip_mat * in){
+ip_mat * ip_mat_to_gray_scale(ip_mat * in){/*faso*/
     unsigned int i, j, k;
     float media=0.0;
     ip_mat *matr;
@@ -484,11 +471,12 @@ ip_mat * ip_mat_to_gray_scale(ip_mat * in){
 
 
 /* Effettua la fusione (combinazione convessa) di due immagini */
-ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
+ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){/*faso*/
     unsigned int i,j,q;
     float blended = 0.0;
     ip_mat *c;
-    if(check_dimensions(a, b) && alpha >= 0 && alpha <= 1){
+    check_dimensions(a, b);
+    if(alpha >= 0 && alpha <= 1){
         c = ip_mat_create(a->h,a->w,a->k,0.0);
         
         for(i=0;i<a->h;i++){
@@ -503,12 +491,7 @@ ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
         return c;
     }
     else{
-        if(alpha >= 0 && alpha <= 1){
-            printf("Images must have the same size!\n");
-        }
-        else{
-            printf("Alpha must be between 0 and 1!\n");
-        }
+        printf("Alpha must be between 0 and 1!\n");
         exit(1);
     }
 }
@@ -524,7 +507,7 @@ ip_mat * ip_mat_blend(ip_mat * a, ip_mat * b, float alpha){
  * con valori nulli sui bordi corrispondenti al padding e l'immagine "a" riportata
  * nel centro
  * */
-ip_mat * ip_mat_padding(ip_mat * a, unsigned int pad_h, unsigned int pad_w){
+ip_mat * ip_mat_padding(ip_mat * a, unsigned int pad_h, unsigned int pad_w){/*faso*/
     unsigned int i, j, k;
     ip_mat *matr;
     matr = ip_mat_create((a->h)+2*pad_h, (a->w)+2*pad_w, a->k, 0.);
@@ -550,7 +533,7 @@ ip_mat * ip_mat_padding(ip_mat * a, unsigned int pad_h, unsigned int pad_w){
  * Successivamente moltiplichiamo per new_max gli elementi della matrice in modo da ottenere un range
  * di valori in [0,new_max].
  * */
-void rescale(ip_mat * t, float new_max){
+void rescale(ip_mat * t, float new_max){/*rove*/
     unsigned int i, j, k;
     
     for(i = 0; i < t->h; i++){
@@ -567,7 +550,7 @@ void rescale(ip_mat * t, float new_max){
 }
 
 /* Nell'operazione di clamping i valori <low si convertono in low e i valori >high in high.*/
-void clamp(ip_mat * t, float low, float high){
+void clamp(ip_mat * t, float low, float high){/*rove*/
     unsigned int i, j, k;
     
     for(i = 0; i < t->h; i++){
@@ -589,7 +572,7 @@ void clamp(ip_mat * t, float low, float high){
 /* Effettua la convoluzione di un ip_mat "a" con un ip_mat "f".
  * La funzione restituisce un ip_mat delle stesse dimensioni di "a".
  * */
-ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
+ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){/*tutti*/
     unsigned int i, j, k, r=0, c=0;
     float product;
     ip_mat *conv,*sub_mat,*extended;
@@ -629,7 +612,7 @@ ip_mat * ip_mat_convolve(ip_mat * a, ip_mat * f){
 }
 
 /* Crea un filtro di sharpening */
-ip_mat * create_sharpen_filter(){
+ip_mat * create_sharpen_filter(){/*faso*/
     
     int sharp_kernel[3][3] = { {0,-1,0},{-1,5,-1},{0,-1,0} };
     unsigned int i,j,k;
@@ -647,7 +630,7 @@ ip_mat * create_sharpen_filter(){
 }
 
 
-ip_mat * create_emboss_filter(){
+ip_mat * create_emboss_filter(){/*chec*/
     ip_mat *filter;
     unsigned int i,j,k;
     
@@ -670,7 +653,7 @@ ip_mat * create_emboss_filter(){
 
 
 /* Crea un filtro medio per la rimozione del rumore */
-ip_mat * create_average_filter(unsigned int h, unsigned int w, unsigned int k){
+ip_mat * create_average_filter(unsigned int h, unsigned int w, unsigned int k){/*faso*/
     unsigned int i,j,q;
     ip_mat *average;
     average = ip_mat_create(w,h,k,0.0);
@@ -685,7 +668,7 @@ ip_mat * create_average_filter(unsigned int h, unsigned int w, unsigned int k){
 }
 
 /* Crea un filtro per rilevare i bordi */
-ip_mat * create_edge_filter(){
+ip_mat * create_edge_filter(){/*rove*/
     /*  -1  -1  -1
         -1   8  -1
         -1  -1  -1*/
@@ -701,7 +684,7 @@ ip_mat * create_edge_filter(){
 }
 
 
-ip_mat * create_gaussian_filter(unsigned int h, unsigned int w, unsigned int k, float sigma){
+ip_mat * create_gaussian_filter(unsigned int h, unsigned int w, unsigned int k, float sigma){/*tutti*/
         
     unsigned int i,j,q;
     int cx,cy,x,y;

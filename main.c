@@ -29,7 +29,7 @@ int main () {
     bm_save(final_bmp, "BMP/corrupt.bmp"); 
     ip_mat_free(p_partial);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     
@@ -44,7 +44,7 @@ int main () {
     ip_mat_free(p_partial);
     ip_mat_free(p_partial2);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     
@@ -59,7 +59,7 @@ int main () {
     ip_mat_free(p_partial2);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     
@@ -80,7 +80,7 @@ int main () {
     ip_mat_free(p_partial);
     bm_free(final_bmp);
     ip_mat_free(p);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     
@@ -93,7 +93,7 @@ int main () {
     ip_mat_free(p);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     /*BRIGHTEN*/
@@ -105,7 +105,7 @@ int main () {
     ip_mat_free(p);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     
@@ -121,7 +121,7 @@ int main () {
     ip_mat_free(p_partial);
     ip_mat_free(p_partial2);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     
@@ -136,7 +136,7 @@ int main () {
     ip_mat_free(filter);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     
@@ -152,7 +152,7 @@ int main () {
     ip_mat_free(filter);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
     
     
@@ -167,7 +167,7 @@ int main () {
     ip_mat_free(filter);
     ip_mat_free(p_partial);
     bm_free(final_bmp);
-    printf("\n\n\tFatta immagine %d\n\n",count);
+    printf("\n\n\tFatta immagine %d/10\n\n",count);
     count++;
         
     
